@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Verify",
+  "type": "object",
+  "required": ["run_id", "verified_at", "results"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "verified_at": { "type": "string" },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["package_id", "expected_version", "observed_version", "ok"],
+        "properties": {
+          "package_id": { "type": "string" },
+          "expected_version": { "type": "string" },
+          "observed_version": { "type": ["string", "null"] },
+          "ok": { "type": "boolean" },
+          "notes": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}
