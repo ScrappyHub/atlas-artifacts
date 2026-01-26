@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Atlas Policy",
+  "type": "object",
+  "required": ["global", "apps"],
+  "properties": {
+    "global": {
+      "type": "object",
+      "required": ["global_auto_updates", "require_approval_for_installs"],
+      "properties": {
+        "global_auto_updates": { "type": "boolean" },
+        "require_approval_for_installs": { "type": "boolean" }
+      }
+    },
+    "apps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["app_id", "mode", "ring", "constraints"],
+        "properties": {
+          "app_id": { "type": "string" },
+          "mode": { "type": "string", "enum": ["AUTO", "NOTIFY", "NEVER"] },
+          "ring": { "type": "string", "enum": ["stable", "beta"] },
+          "source_lock_engine_id": { "type": ["string", "null"] },
+          "constraints": {
+            "type": "object",
+            "properties": {
+              "only_ac_power": { "type": "boolean" },
+              "min_battery_percent": { "type": "integer", "minimum": 0, "maximum": 100 },
+              "only_unmetered": { "type": "boolean" },
+              "requires_approval": { "type": "boolean" },
+              "allowed_time_windows": { "type": "array", "items": { "type": "object" } }
+            }
+          }
+        }
+      }
+    }
+  }
+}
