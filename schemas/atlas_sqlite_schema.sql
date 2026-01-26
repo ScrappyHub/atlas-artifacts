@@ -99,3 +99,41 @@ CREATE TABLE IF NOT EXISTS run_artifacts (
   PRIMARY KEY (run_id, artifact_key),
   FOREIGN KEY (run_id) REFERENCES runs(run_id) ON DELETE CASCADE
 );
+
+-- Accounts & subscriptions (Phase 1 local-ready; Phase 2 server-backed)
+
+CREATE TABLE IF NOT EXISTS accounts (
+  account_id TEXT PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  display_name TEXT
+);
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+  account_id TEXT NOT NULL,
+  tier TEXT NOT NULL CHECK(tier IN ('tier1_personal','tier2_pro','tier3_enterprise')),
+  max_devices INTEGER NOT NULL CHECK(max_devices >= 1),
+  status TEXT NOT NULL CHECK(status IN ('trial','active','expired','grace')),
+  expires_at TEXT,
+  grace_ends_at TEXT,
+  entitlements_json TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (account_id),
+  FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS devices (
+  device_id TEXT PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  device_nickname TEXT
+);
+
+CREATE TABLE IF NOT EXISTS device_enrollments (
+  account_id TEXT NOT NULL,
+  device_id TEXT NOT NULL,
+  state TEXT NOT NULL CHECK(state IN ('pending','active','deactivated','revoked','expired')),
+  enrolled_at TEXT NOT NULL,
+  last_seen_at TEXT,
+  PRIMARY KEY (account_id, device_id),
+  FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE,
+  FOREIGN KEY (device_id) REFERENCES devices(device_id) ON DELETE CASCADE
+);
