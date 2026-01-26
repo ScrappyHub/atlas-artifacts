@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IPC Response",
+  "type": "object",
+  "required": ["request_id", "ok"],
+  "properties": {
+    "request_id": { "type": "string" },
+    "ok": { "type": "boolean" },
+    "error": {
+      "type": ["object", "null"],
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" }
+      }
+    },
+    "data": { "type": ["object", "null"] }
+  }
+}
