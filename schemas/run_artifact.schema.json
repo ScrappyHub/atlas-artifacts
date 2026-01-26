@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Atlas Run Artifact Bundle",
+  "type": "object",
+  "required": ["run_id", "run_type", "created_at", "engine_set", "outcome", "artifacts"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "run_type": { "type": "string", "enum": ["scan_run", "apply_run"] },
+    "created_at": { "type": "string" },
+    "engine_set": { "type": "array", "items": { "type": "string" } },
+    "outcome": { "type": "string", "enum": ["success", "partial", "failed", "deferred"] },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["artifact_key", "sha256", "path"],
+        "properties": {
+          "artifact_key": { "type": "string" },
+          "sha256": { "type": "string" },
+          "path": { "type": "string" }
+        }
+      }
+    }
+  }
+}
