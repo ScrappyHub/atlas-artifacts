@@ -10,15 +10,14 @@ public static class SqliteBootstrap
         await using var conn = new SqliteConnection(cs);
         await conn.OpenAsync();
 
-        // Minimal bootstrap for “spine” (runs, artifacts, licensing tables can expand next).
         var sql = @"
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS runs (
   run_id TEXT PRIMARY KEY,
-  run_type TEXT NOT NULL,
+  run_type TEXT NOT NULL CHECK(run_type IN ('scan_run','apply_run')),
   created_at TEXT NOT NULL,
-  outcome TEXT NOT NULL,
+  outcome TEXT NOT NULL CHECK(outcome IN ('success','partial','failed','deferred')),
   summary_json TEXT NOT NULL
 );
 
