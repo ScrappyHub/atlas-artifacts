@@ -32,19 +32,20 @@ public sealed class IpcServer
             _ = Task.Run(async () =>
             {
                 await using var p = pipe;
+
                 try
                 {
-                    var reqJson = await ReadAllAsync(p);
+                    var reqJson = await ReadFrameAsync(p);
                     var req = JsonSerializer.Deserialize<IpcRequest>(reqJson, JsonOpts.Serializer)
                               ?? throw new InvalidOperationException("Invalid request JSON");
 
                     var resp = await _router.HandleAsync(req);
                     var outJson = JsonSerializer.Serialize(resp, JsonOpts.Serializer);
-                    await WriteAllAsync(p, outJson);
+
+                    await WriteFrameAsync(p, outJson);
                 }
                 catch (Exception ex)
                 {
-                    // Best-effort error response
                     var fallback = new IpcResponse(
                         request_id: "unknown",
                         ok: false,
@@ -53,31 +54,43 @@ public sealed class IpcServer
                     );
 
                     var outJson = JsonSerializer.Serialize(fallback, JsonOpts.Serializer);
-                    await WriteAllAsync(p, outJson);
+                    try { await WriteFrameAsync(p, outJson); } catch { /* best effort */ }
                 }
             });
         }
     }
 
-    private static async Task<string> ReadAllAsync(Stream s)
+    private static async Task<string> ReadFrameAsync(Stream s)
     {
-        using var ms = new MemoryStream();
-        var buffer = new byte[16 * 1024];
-        int read;
-        while ((read = await s.ReadAsync(buffer, 0, buffer.Length)) > 0)
-        {
-            ms.Write(buffer, 0, read);
-            if (!s.CanRead) break;
-            // Named pipe read may end when client closes. Client should close after write.
-        }
+        var lenBytes = await ReadExactAsync(s, 4);
+        var len = BitConverter.ToInt32(lenBytes, 0);
+        if (len <= 0 || len > 10_000_000)
+            throw new InvalidOperationException($"Invalid frame length: {len}");
 
-        return Encoding.UTF8.GetString(ms.ToArray());
+        var payload = await ReadExactAsync(s, len);
+        return Encoding.UTF8.GetString(payload);
     }
 
-    private static async Task WriteAllAsync(Stream s, string text)
+    private static async Task WriteFrameAsync(Stream s, string text)
     {
-        var bytes = Encoding.UTF8.GetBytes(text);
-        await s.WriteAsync(bytes, 0, bytes.Length);
+        var payload = Encoding.UTF8.GetBytes(text);
+        var lenBytes = BitConverter.GetBytes(payload.Length);
+
+        await s.WriteAsync(lenBytes, 0, lenBytes.Length);
+        await s.WriteAsync(payload, 0, payload.Length);
         await s.FlushAsync();
+    }
+
+    private static async Task<byte[]> ReadExactAsync(Stream s, int n)
+    {
+        var buf = new byte[n];
+        var off = 0;
+        while (off < n)
+        {
+            var r = await s.ReadAsync(buf, off, n - off);
+            if (r <= 0) throw new EndOfStreamException("Pipe closed while reading frame");
+            off += r;
+        }
+        return buf;
     }
 }
