@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Atlas Device Enrollment",
+  "type": "object",
+  "required": ["account_id", "device_id", "state", "enrolled_at"],
+  "properties": {
+    "account_id": { "type": "string" },
+    "device_id": { "type": "string" },
+    "state": { "type": "string", "enum": ["pending", "active", "deactivated", "revoked", "expired"] },
+    "device_nickname": { "type": ["string", "null"] },
+    "enrolled_at": { "type": "string" },
+    "last_seen_at": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}
