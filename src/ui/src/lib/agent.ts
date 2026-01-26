@@ -8,7 +8,6 @@ export type AgentResponse = {
 };
 
 function uuid(): string {
-  // good enough for now; replace with crypto UUID if you want
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
@@ -16,8 +15,8 @@ export async function callAgent(command: string, payload: any = {}): Promise<Age
   const req = {
     request_id: uuid(),
     command,
-    user_id: "local-user", // Phase 1 placeholder
-    payload
+    user_id: "local-user",
+    payload: payload ?? {}
   };
 
   const res = await invoke("agent_request", { req });
