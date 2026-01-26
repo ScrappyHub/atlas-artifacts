@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Plan",
+  "type": "object",
+  "required": ["run_id", "created_at", "policy_snapshot_hash", "steps"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "created_at": { "type": "string" },
+    "policy_snapshot_hash": { "type": "string" },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["step_id", "engine_id", "action", "package_id", "target_version", "requires_admin"],
+        "properties": {
+          "step_id": { "type": "string" },
+          "engine_id": { "type": "string" },
+          "action": { "type": "string", "enum": ["install_update"] },
+          "package_id": { "type": "string" },
+          "target_version": { "type": "string" },
+          "requires_admin": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}
