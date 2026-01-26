@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IPC Request",
+  "type": "object",
+  "required": ["request_id", "command", "user_id"],
+  "properties": {
+    "request_id": { "type": "string" },
+    "command": {
+      "type": "string",
+      "enum": [
+        "get_status",
+        "get_inventory",
+        "request_scan",
+        "get_candidates",
+        "build_plan",
+        "execute_plan",
+        "get_run_history",
+        "get_run_details",
+        "set_global_policy",
+        "set_app_policy",
+        "set_feature_flag"
+      ]
+    },
+    "user_id": { "type": "string" },
+    "payload": { "type": "object" }
+  }
+}
