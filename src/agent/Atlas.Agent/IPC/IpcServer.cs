@@ -1,3 +1,4 @@
+using System.IO;
 using System.IO.Pipes;
 using System.Text;
 using System.Text.Json;
@@ -46,7 +47,7 @@ public sealed class IpcServer
                 }
                 catch (OperationCanceledException)
                 {
-                    // best effort: allow cancellation to exit cleanly
+                    // best effort; exit connection
                 }
                 catch (Exception ex)
                 {
