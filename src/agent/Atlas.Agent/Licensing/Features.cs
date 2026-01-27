@@ -1,3 +1,4 @@
+Write-Utf8NoBom -Path .\src\agent\Atlas.Agent\Licensing\Feature.cs -Content @'
 using System;
 
 namespace Atlas.Agent.Licensing;
@@ -12,3 +13,4 @@ public enum Feature
     ExportLogs = 1 << 3,
     Automation = 1 << 4
 }
+'@
