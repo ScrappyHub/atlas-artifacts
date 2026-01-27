@@ -1,27 +1,33 @@
-# Atlas Agent — Canonical Licensing Contract
+# Atlas Agent — Canonical Licensing (Contract)
 
 This document is the non-negotiable, canonical contract for licensing in Atlas.Agent.
 
-## Goals (non-negotiable)
+## Goals
 
-- The agent MUST run offline.
-- Licensing MUST be enforced locally at runtime.
-- Editing license JSON MUST NOT unlock features (signature required).
-- License tier MUST cap allowed features and device_limit.
+- **Offline-first**: Agent MUST validate and enforce licensing with **no network calls**.
+- **Cryptographically enforced**: A license is valid only if the signature verifies.
+- **Deterministic**: The same license files produce the same effective entitlements.
+- **Enforced at runtime**: Feature access MUST be gated in router/handlers.
+
+---
 
 ## Files on disk (Windows)
 
-All agent data lives under ProgramData:
+All licensing files live under ProgramData:
 
 C:\ProgramData\Atlas\Agent\
   licenses\
     atlas.license.json
     atlas.license.sig
+
+Additional agent data:
+
+C:\ProgramData\Atlas\Agent\
   runs\
   logs\
   atlas.db
 
-The agent MUST create these directories if missing.
+---
 
 ## License payload file
 
@@ -85,7 +91,11 @@ Format: Base64-encoded RSA-SHA256 signature computed over the EXACT bytes of atl
 
     Verification: performed locally by Atlas.Agent using embedded public key
 
-If signature verification fails, the agent MUST treat the machine as unlicensed.
+    If signature verification fails, the agent MUST treat the machine as unlicensed.
+
+Expiration
+
+If expires_at is not null and is in the past (UTC), the license is expired and MUST be treated as unlicensed.
 Tier policy (canonical caps)
 
 Tier defines an upper bound. The payload may request LESS than the tier allows, but NEVER MORE.
@@ -99,46 +109,37 @@ The agent clamps requested device_limit to tier max:
 allowed_device_limit = min(requested_device_limit, tier_max_devices)
 Canonical tiers
 
-    free:
+free
 
-        max devices: 1
+    max devices: 1
 
-        features: winget_scan
+    features: winget_scan
 
-    personal:
+personal
 
-        max devices: 1
+    max devices: 1
 
-        features: winget_scan, artifacts
+    features: winget_scan, artifacts
 
-    pro:
+pro
 
-        max devices: 5
+    max devices: 5
 
-        features: winget_scan, artifacts, export_logs
+    features: winget_scan, artifacts, export_logs
 
-    business:
+business
 
-        max devices: 25
+    max devices: 25
 
-        features: winget_scan, artifacts, export_logs, rollback
+    features: winget_scan, artifacts, export_logs, rollback
 
-    enterprise:
+enterprise
 
-        max devices: 250
+    max devices: 250
 
-        features: winget_scan, artifacts, export_logs, rollback, automation
+    features: winget_scan, artifacts, export_logs, rollback, automation
 
-Runtime enforcement
-
-All feature access MUST be gated in the command router / handlers.
-If a feature is not licensed, the agent MUST return a failure response.
-
-This is enforcement, not UI.
-Expiration
-
-If expires_at is not null and is in the past (UTC), the license is expired and MUST be treated as unlicensed.
-Offline operation
+Offline operation (canonical)
 
 No network call is required to validate the license.
 All validation is local:
@@ -148,3 +149,11 @@ All validation is local:
     apply tier caps
 
     enforce at runtime
+
+Runtime enforcement (canonical)
+
+All feature access MUST be gated in the command router / handlers.
+
+If a feature is not licensed, the agent MUST return a failure response.
+
+This is enforcement, not UI.
