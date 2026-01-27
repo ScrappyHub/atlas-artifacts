@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Scope
 
 ## In Scope
@@ -16,3 +17,20 @@
 
 ## Hard Boundary Statement
 Atlas Update is a standalone system and must never be merged conceptually or operationally with any other platform. Shared patterns are allowed; shared data, schemas, or registries are not.
+=======
+# Scope
+
+## In Scope
+- Local agent/service for inventory, resolution, and execution
+- Desktop UI later (backend-first now)
+- Engine registry + built-in engines (starting with Windows winget)
+- Local persistence (SQLite) + file artifacts
+
+## Out of Scope (initially)
+- Arbitrary URL downloads / web scraping installers
+- Driver/firmware updates (default-off, later)
+- Enterprise server control plane (later)
+
+## Hard Boundary
+Standalone system; no coupling with any other platforms.
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

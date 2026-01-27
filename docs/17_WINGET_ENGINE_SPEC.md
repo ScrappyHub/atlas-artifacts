@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # windows.winget Engine Spec
 
 ## Goals (MVP)
@@ -29,3 +30,11 @@ The agent may execute ONLY these winget commands (no freeform args):
 ## Known Limitations
 - Not all packages support silent updates
 - Some upgrades may require user interaction; these must be NOTIFY-only or explicitly approved
+=======
+# windows.winget Engine Spec
+
+Allowlisted commands:
+- winget list --accept-source-agreements [--output json]
+- winget upgrade --accept-source-agreements [--output json]
+- (apply later) winget upgrade --id <ID> --accept-* [--silent gated]
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

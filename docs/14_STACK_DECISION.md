@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Stack Decision (Phase 1)
 
 ## Agent
@@ -15,3 +16,11 @@
 ## Non-Goals
 - Third-party engine plugins (deferred)
 - Remote control plane (deferred)
+=======
+# Stack Decision (Phase 1)
+
+Agent: .NET (C#) Windows service style
+IPC: Named pipe (length-prefixed duplex)
+UI: deferred (backend-first); later Tauri + React from Figma
+Engines: built-in only (initial windows.winget)
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Atlas Update
 
 Atlas Update is a workstation software update orchestrator designed for safe automation, explicit user control, and auditable execution.
@@ -26,3 +27,16 @@ Phase 1 targets Windows using the `winget` engine, with manual approval and full
 
 ## Repository Manifest
 See `docs/00_MANIFEST.md`.
+=======
+# Atlas Update
+
+Atlas Update is a workstation software update orchestrator designed for safe automation, explicit user control, and auditable execution.
+
+## System Boundary (Hard Rule)
+Atlas Update is a standalone product and codebase. It is **not** CORE, not Covenant Gate, and not ROOTED. No shared schemas, registries, assumptions, or deployments. Only architectural patterns may be reused (registry + capability gating + feature flags + auditable runs).
+
+## MVP Target
+Phase 1: Windows winget scan + auditable run artifacts.
+
+See docs/00_MANIFEST.md.
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

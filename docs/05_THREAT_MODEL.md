@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Threat Model
 
 ## Assets
@@ -26,3 +27,17 @@ T5: Dependency confusion / package spoofing
 
 ## Residual Risk
 - Some ecosystems lack consistent signature verification; those engines must degrade safely (NOTIFY only by default) unless user/admin explicitly opts in.
+=======
+# Threat Model
+
+Assets:
+- Integrity of installed software
+- System stability
+- Audit history integrity
+
+Threats:
+- MITM downloads → signatures/hashes + provenance
+- Local malware → strict IPC authz + least privilege
+- Supply chain → trusted sources only, defaults OFF for community
+- Log tampering → append-only artifacts + hash-chain ready
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

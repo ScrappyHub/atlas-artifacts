@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Runs & Artifacts
 
 Atlas Update treats every scan/apply as a “run” with artifacts.
@@ -31,3 +32,16 @@ Atlas Update treats every scan/apply as a “run” with artifacts.
 - engine_set (engine_ids used)
 - outcome (success|partial|failed|deferred)
 - failure_reasons (structured)
+=======
+# Runs & Artifacts
+
+Run types:
+- scan_run
+- apply_run
+
+Stages:
+inventory → resolve → plan → apply → verify → record
+
+Artifacts (required):
+inventory.json, candidates.json, plan.json, apply.jsonl, verify.json, summary.json, manifest.json
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

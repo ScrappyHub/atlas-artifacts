@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Device Enrollment (Canonical)
 
 Device enrollment is the mechanism that binds a machine to an account and consumes a device slot.
@@ -37,3 +38,11 @@ Only the Agent can:
 - apply entitlements
 
 UI can request actions but cannot force outcomes.
+=======
+# Device Enrollment (Canonical)
+
+device_id = SHA-256(fingerprint + per-install salt)
+Never store raw fingerprint values in artifacts.
+Enrollment states: pending, active, deactivated, revoked, expired
+Only Agent can compute device_id and enforce entitlements.
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # IPC Spec (UI ↔ Agent)
 
 ## Transport
@@ -25,3 +26,11 @@
 - set_global_policy
 - set_app_policy
 - set_feature_flag
+=======
+# IPC Spec
+
+Transport: Windows named pipe (Phase 1)
+Framing: 4-byte little-endian length + JSON payload
+Commands:
+get_status, get_license_status, request_scan, get_run_history, get_run_details, ...
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

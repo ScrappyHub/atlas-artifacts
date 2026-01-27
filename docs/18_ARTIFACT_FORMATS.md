@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Artifact Formats
 
 All artifacts are written under:
@@ -16,3 +17,13 @@ Required:
 manifest.json includes:
 - previous_manifest_sha256 (nullable for first run)
 - current_manifest_sha256 (computed over manifest payload excluding this field)
+=======
+# Artifact Formats
+
+Artifacts directory:
+artifacts/YYYY/MM/DD/<run_id>/
+
+manifest.json includes:
+previous_manifest_sha256 (nullable)
+current_manifest_sha256 (hash over payload excluding itself)
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

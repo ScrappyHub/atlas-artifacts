@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Requirements
 
 ## Functional Requirements (FR)
@@ -27,3 +28,20 @@ NFR-07 Privacy: default local-only, no telemetry unless explicitly enabled.
 - Community sources are OFF by default (configurable).
 - Driver/firmware updates OFF by default.
 - Pre-release versions OFF by default.
+=======
+# Requirements
+
+## Functional
+- Inventory installed software
+- Resolve updates from allowed engines
+- Apply updates under policy (AUTO/NOTIFY/NEVER)
+- Scheduling + constraints (tier-gated)
+- Role/capability gated actions
+- Auditable runs + artifacts
+
+## Non-Functional
+- Security-first, no untrusted installers
+- Integrity and provenance recording
+- Reliability (resume, contain failures)
+- Privacy default local-only
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Engine API Spec (Agent ↔ Engines)
 
 Engines are in-process modules (built-in) in Phase 1.
@@ -27,3 +28,12 @@ Every candidate must include:
 - candidate_version
 - requires_admin (bool)
 - evidence: signature/hash fields when available
+=======
+# Engine API Spec
+
+Required functions:
+inventory, check_updates, build_plan, apply, verify
+
+Determinism:
+build_plan is deterministic given inventory + candidates + policy snapshots.
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

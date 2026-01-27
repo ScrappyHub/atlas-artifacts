@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Billing & Entitlements (Canonical)
 
 Atlas Update uses a subscription tier to determine:
@@ -47,3 +48,18 @@ Phase 2 (server mode):
 - Tier decides the ceiling (max devices + advanced automation).
 - Feature flags control execution gates.
 - Agent is the enforcement point; UI is never trusted for enforcement.
+=======
+# Billing & Entitlements (Canonical)
+
+Tiers (LOCKED):
+- Tier 1 Personal: 1 device
+- Tier 2 Pro/Family: 10 devices
+- Tier 3 Enterprise: policy-based
+
+Definitions:
+account, subscription, device, enrollment, entitlements
+
+Enforcement:
+Agent is enforcement point. Phase 1 local token; Phase 2 server.
+Over-limit blocks new enrollments; existing devices continue (soft enforcement default).
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

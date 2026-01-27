@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 -- schemas/atlas_sqlite_schema.sql
 
 PRAGMA foreign_keys = ON;
@@ -137,3 +138,60 @@ CREATE TABLE IF NOT EXISTS device_enrollments (
   FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE,
   FOREIGN KEY (device_id) REFERENCES devices(device_id) ON DELETE CASCADE
 );
+=======
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS runs (
+  run_id TEXT PRIMARY KEY,
+  run_type TEXT NOT NULL CHECK(run_type IN ('scan_run','apply_run')),
+  created_at TEXT NOT NULL,
+  outcome TEXT NOT NULL CHECK(outcome IN ('success','partial','failed','deferred')),
+  summary_json TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS run_artifacts (
+  run_id TEXT NOT NULL,
+  artifact_key TEXT NOT NULL,
+  path TEXT NOT NULL,
+  sha256 TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (run_id, artifact_key),
+  FOREIGN KEY (run_id) REFERENCES runs(run_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS accounts (
+  account_id TEXT PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  display_name TEXT
+);
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+  account_id TEXT NOT NULL,
+  tier TEXT NOT NULL CHECK(tier IN ('tier1_personal','tier2_pro','tier3_enterprise')),
+  max_devices INTEGER NOT NULL CHECK(max_devices >= 1),
+  status TEXT NOT NULL CHECK(status IN ('trial','active','expired','grace')),
+  expires_at TEXT,
+  grace_ends_at TEXT,
+  entitlements_json TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (account_id),
+  FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS devices (
+  device_id TEXT PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  device_nickname TEXT
+);
+
+CREATE TABLE IF NOT EXISTS device_enrollments (
+  account_id TEXT NOT NULL,
+  device_id TEXT NOT NULL,
+  state TEXT NOT NULL CHECK(state IN ('pending','active','deactivated','revoked','expired')),
+  enrolled_at TEXT NOT NULL,
+  last_seen_at TEXT,
+  PRIMARY KEY (account_id, device_id),
+  FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE,
+  FOREIGN KEY (device_id) REFERENCES devices(device_id) ON DELETE CASCADE
+);
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

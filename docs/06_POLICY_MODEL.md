@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Policy Model
 
 ## Roles
@@ -36,3 +37,30 @@
 3. If engine capability required and feature flag denies → block candidate.
 4. If candidate requires admin and caller role < Admin → NOTIFY only.
 5. If constraints not satisfied (battery, window, metered) → defer and record reason.
+=======
+# Policy Model
+
+Roles:
+- admin, maintainer, user, auditor
+
+Feature flags (per device + user):
+- enable_background_scans
+- enable_scheduling
+- enable_auto_updates
+- allow_community_sources
+- allow_silent_install
+- enable_org_controls
+
+Per-app policy:
+- mode: AUTO/NOTIFY/NEVER
+- ring: stable/beta
+- source_lock_engine_id optional
+- constraints: AC, battery, metered, time windows, requires_approval
+
+Evaluation rules:
+1) global_auto_updates OFF → no auto apply
+2) app NEVER → blocked
+3) capability denied by flags → blocked
+4) requires admin + role insufficient → notify-only
+5) constraints not met → defer w reason
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

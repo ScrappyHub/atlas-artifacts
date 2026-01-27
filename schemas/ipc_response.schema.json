@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "IPC Response",
@@ -16,3 +17,20 @@
     "data": { "type": ["object", "null"] }
   }
 }
+=======
+{
+  """": ""https://json-schema.org/draft/2020-12/schema"",
+  ""title"": ""IPC Response"",
+  ""type"": ""object"",
+  ""required"": [""request_id"", ""ok""],
+  ""properties"": {
+    ""request_id"": { ""type"": ""string"" },
+    ""ok"": { ""type"": ""boolean"" },
+    ""error"": {
+      ""type"": [""object"", ""null""],
+      ""properties"": { ""code"": { ""type"": ""string"" }, ""message"": { ""type"": ""string"" } }
+    },
+    ""data"": { ""type"": [""object"", ""null""] }
+  }
+}
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

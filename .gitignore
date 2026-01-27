@@ -1,0 +1,13 @@
+# .NET
+bin/
+obj/
+
+# Local app data artifacts (not tracked)
+**/artifacts/
+**/*.sqlite
+**/device.salt
+**/license.token.json
+
+# Node (UI later)
+node_modules/
+dist/

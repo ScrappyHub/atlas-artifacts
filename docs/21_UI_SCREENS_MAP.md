@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # UI Screens Map (Figma → React/Vue)
 
 ## 1) Dashboard
@@ -45,3 +46,9 @@
 - Engine visibility (read-only in MVP, admin in future)
 - Export run bundle
 - Log level
+=======
+# UI Screens Map
+
+Dashboard, Updates, Policies, Schedule, Runs, License & Devices, Settings.
+UI is deferred until backend is fully locked.
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

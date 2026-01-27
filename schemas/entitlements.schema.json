@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Atlas Entitlements",
@@ -35,3 +36,30 @@
   },
   "additionalProperties": false
 }
+=======
+{
+  """": ""https://json-schema.org/draft/2020-12/schema"",
+  ""title"": ""Atlas Entitlements"",
+  ""type"": ""object"",
+  ""required"": [""account_id"", ""tier"", ""max_devices"", ""features""],
+  ""properties"": {
+    ""account_id"": { ""type"": ""string"" },
+    ""tier"": { ""type"": ""string"", ""enum"": [""tier1_personal"", ""tier2_pro"", ""tier3_enterprise""] },
+    ""max_devices"": { ""type"": ""integer"", ""minimum"": 1 },
+    ""features"": {
+      ""type"": ""object"",
+      ""required"": [""enable_background_scans"", ""enable_scheduling"", ""enable_auto_updates"", ""allow_community_sources"", ""allow_silent_install"", ""enable_org_controls""],
+      ""properties"": {
+        ""enable_background_scans"": { ""type"": ""boolean"" },
+        ""enable_scheduling"": { ""type"": ""boolean"" },
+        ""enable_auto_updates"": { ""type"": ""boolean"" },
+        ""allow_community_sources"": { ""type"": ""boolean"" },
+        ""allow_silent_install"": { ""type"": ""boolean"" },
+        ""enable_org_controls"": { ""type"": ""boolean"" }
+      },
+      ""additionalProperties"": false
+    }
+  },
+  ""additionalProperties"": false
+}
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

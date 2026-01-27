@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Atlas License Status",
@@ -14,3 +15,20 @@
   },
   "additionalProperties": false
 }
+=======
+{
+  """": ""https://json-schema.org/draft/2020-12/schema"",
+  ""title"": ""Atlas License Status"",
+  ""type"": ""object"",
+  ""required"": [""state"", ""tier"", ""max_devices"", ""device_id"", ""enrollment_state""],
+  ""properties"": {
+    ""state"": { ""type"": ""string"", ""enum"": [""trial"", ""active"", ""expired"", ""grace""] },
+    ""tier"": { ""type"": ""string"", ""enum"": [""tier1_personal"", ""tier2_pro"", ""tier3_enterprise""] },
+    ""max_devices"": { ""type"": ""integer"", ""minimum"": 1 },
+    ""device_id"": { ""type"": ""string"" },
+    ""enrollment_state"": { ""type"": ""string"", ""enum"": [""pending"", ""active"", ""deactivated"", ""revoked"", ""expired""] },
+    ""expires_at"": { ""type"": [""string"", ""null""] },
+    ""grace_ends_at"": { ""type"": [""string"", ""null""] }
+  }
+}
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

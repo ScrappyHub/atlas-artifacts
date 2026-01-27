@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # API Contracts (Internal)
 
 ## UI → Agent (IPC)
@@ -28,3 +29,13 @@ Every result must include provenance fields:
 - engine_id
 - source descriptors
 - evidence (signature/hash if available)
+=======
+# API Contracts (Internal)
+
+UI → Agent (IPC):
+get_status, get_inventory, request_scan, get_candidates, build_plan, execute_plan,
+get_run_history, get_run_details, set_policy, set_schedule, license commands.
+
+Agent → Engines:
+inventory, check_updates, build_plan, apply, verify
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

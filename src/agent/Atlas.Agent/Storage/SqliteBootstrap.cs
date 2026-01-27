@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using Microsoft.Data.Sqlite;
 
 namespace Atlas.Agent.Storage;
@@ -36,3 +37,24 @@ CREATE TABLE IF NOT EXISTS run_artifacts (
         await cmd.ExecuteNonQueryAsync();
     }
 }
+=======
+using Microsoft.Data.Sqlite;
+
+namespace Atlas.Agent.Storage;
+
+public static class SqliteBootstrap
+{
+    public static async Task EnsureDbAsync(string dbPath)
+    {
+        var cs = new SqliteConnectionStringBuilder { DataSource = dbPath }.ToString();
+        await using var conn = new SqliteConnection(cs);
+        await conn.OpenAsync();
+
+        var sql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, ""..\\..\\..\\..\\..\\schemas\\atlas_sqlite_schema.sql""));
+        // If path resolution fails in your environment, we can replace with embedded SQL.
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = sql;
+        await cmd.ExecuteNonQueryAsync();
+    }
+}
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

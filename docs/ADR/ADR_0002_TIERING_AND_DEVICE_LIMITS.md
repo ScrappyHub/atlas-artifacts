@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ADR 0002: Tiering and Device Limits
 
 ## Status
@@ -20,3 +21,15 @@ We lock a 3-tier model:
 ## Alternatives Considered
 - Two “Tier 2” options (3 devices and 10 devices)
 Rejected due to buyer confusion and entitlement/billing complexity.
+=======
+# ADR 0002: Tiering and Device Limits
+
+## Status
+Accepted
+
+## Decision
+3 tiers locked:
+Tier 1: 1 device
+Tier 2: 10 devices
+Tier 3: Enterprise (policy-based)
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

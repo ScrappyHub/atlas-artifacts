@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Architecture
 
 ## Components
@@ -26,3 +27,17 @@ Inventory → Resolve → Plan → Apply → Verify → Record
 
 ## “No Scrape” Rule
 Atlas Update never scrapes random websites for installers. Engines may only use trusted package managers or vendor endpoints with verification.
+=======
+# Architecture
+
+Components:
+- Agent (privileged executor, enforcement point)
+- UI (untrusted; requests only)
+- Engines (built-in; strict contract)
+- Persistence (SQLite + artifact store)
+
+Trust boundary:
+- UI never trusted; Agent authorizes and executes.
+- Engines restricted (built-in only MVP).
+- No scraping; trusted sources only.
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Inventory",
@@ -22,3 +23,29 @@
     }
   }
 }
+=======
+{
+  """": ""https://json-schema.org/draft/2020-12/schema"",
+  ""title"": ""Inventory"",
+  ""type"": ""object"",
+  ""required"": [""device_id"", ""captured_at"", ""items""],
+  ""properties"": {
+    ""device_id"": { ""type"": ""string"" },
+    ""captured_at"": { ""type"": ""string"" },
+    ""items"": {
+      ""type"": ""array"",
+      ""items"": {
+        ""type"": ""object"",
+        ""required"": [""app_key"", ""display_name"", ""version"", ""source""],
+        ""properties"": {
+          ""app_key"": { ""type"": ""string"" },
+          ""display_name"": { ""type"": ""string"" },
+          ""version"": { ""type"": ""string"" },
+          ""source"": { ""type"": ""string"" },
+          ""vendor"": { ""type"": [""string"", ""null""] }
+        }
+      }
+    }
+  }
+}
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

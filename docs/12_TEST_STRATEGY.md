@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Test Strategy
 
 ## Unit Tests
@@ -14,3 +15,10 @@
 - pinned sample inventories
 - pinned candidate sets
 - expected plans (hash stable)
+=======
+# Test Strategy
+
+- Unit: policy eval, plan determinism, hashing/manifest
+- Integration: winget parsing, scan run creation
+- Golden fixtures: pinned outputs → stable plan hashes
+>>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))
