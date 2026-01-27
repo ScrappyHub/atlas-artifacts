@@ -1,0 +1,1 @@
+<PASTE docs/licensing.md CONTENT HERE>
