@@ -4,13 +4,26 @@ using System.Text.Json.Serialization;
 
 namespace Atlas.Agent.Licensing;
 
-// This models the raw JSON contract (snake_case keys).
-public sealed record LicensePayload(
-    [property: JsonPropertyName("license_id")] string LicenseId,
-    [property: JsonPropertyName("customer")] string Customer,
-    [property: JsonPropertyName("tier")] string Tier,
-    [property: JsonPropertyName("device_limit")] int DeviceLimit,
-    [property: JsonPropertyName("features")] IReadOnlyList<string> Features,
-    [property: JsonPropertyName("issued_at")] DateTimeOffset IssuedAt,
-    [property: JsonPropertyName("expires_at")] DateTimeOffset? ExpiresAt
-);
+public sealed class LicensePayload
+{
+    [JsonPropertyName("license_id")]
+    public string? LicenseId { get; set; }
+
+    [JsonPropertyName("customer")]
+    public string? Customer { get; set; }
+
+    [JsonPropertyName("tier")]
+    public string? Tier { get; set; }
+
+    [JsonPropertyName("device_limit")]
+    public int DeviceLimit { get; set; }
+
+    [JsonPropertyName("features")]
+    public List<string>? Features { get; set; }
+
+    [JsonPropertyName("issued_at")]
+    public DateTimeOffset IssuedAt { get; set; }
+
+    [JsonPropertyName("expires_at")]
+    public DateTimeOffset? ExpiresAt { get; set; }
+}
