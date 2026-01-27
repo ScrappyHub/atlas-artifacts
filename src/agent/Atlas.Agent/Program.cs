@@ -1,42 +1,54 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Atlas.Agent.Engines.Winget;
 using Atlas.Agent.IPC;
 using Atlas.Agent.Licensing;
-using Atlas.Agent.Security;
+using Atlas.Agent.Logging;
 using Atlas.Agent.Storage;
 
 namespace Atlas.Agent;
 
 public static class Program
 {
-    public static async Task Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
-        Console.WriteLine("Atlas Update Agent starting...");
-
+        // Canonical paths (cross-platform)
         var paths = AppPaths.Resolve();
-        paths.EnsureAll();
+        AppPaths.EnsureAll(paths);
 
-        // DB bootstrap (local-only, no network)
-        await SqliteBootstrap.EnsureDbAsync(paths.DbPath);
+        var cts = new CancellationTokenSource();
+        Console.CancelKeyPress += (_, e) => { e.Cancel = true; cts.Cancel(); };
 
-        // Device identity (stable + deterministic)
-        var deviceId = DeviceIdentity.GetOrCreateDeviceId(paths.DeviceSaltPath);
-        Console.WriteLine($"device_id = {(deviceId.Length >= 12 ? deviceId[..12] + "…" : deviceId)}");
+        // Licensing (local, offline). Keep your existing implementation.
+        var license = new LicenseService();
+        license.Load();
 
-        // Licensing (offline verify + tier caps)
-        var licenseService = new LicenseService(paths);
+        // Storage/artifacts
+        var runStore = new RunStore(paths.DbPath);
+        var artifacts = new ArtifactWriter(paths.RunsRoot);
 
-        // Engines (wire what exists now)
+        // Engine (Windows-only execution; still safe to construct everywhere)
         var winget = new WingetScan(new WingetRunner());
 
-        // Router is the enforcement boundary
-        var router = new CommandRouter(paths, deviceId, licenseService, winget);
+        // IPC
+        var router = new CommandRouter(winget);
+        var ipc = new IpcServer(router);
 
-        // IPC server
-        var server = new IpcServer(pipeName: "atlas-update", router);
+        await ipc.StartAsync(cts.Token);
 
-        Console.WriteLine(@"IPC listening on named pipe: \\.\pipe\atlas-update");
-        await server.RunAsync();
+        // Quick self-test: ping + scan
+        var ping = await ipc.DispatchAsync(new IpcRequest(IpcCommand.Ping), cts.Token);
+        Console.WriteLine($"PING: ok={ping.Ok} msg={ping.Message}");
+
+        var scan = await ipc.DispatchAsync(new IpcRequest(IpcCommand.ScanWinget), cts.Token);
+        var runId = Guid.NewGuid().ToString("n");
+        runStore.Insert(runId, "winget_scan", scan);
+        artifacts.WriteJson(runId, "winget_scan", scan);
+
+        Console.WriteLine("Atlas.Agent baseline finished.");
+        await ipc.StopAsync(cts.Token);
+
+        return 0;
     }
 }
