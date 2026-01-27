@@ -1,3 +1,6 @@
+using System;
+using System.Threading.Tasks;
+using Atlas.Agent.Engines.Winget;
 using Atlas.Agent.IPC;
 using Atlas.Agent.Licensing;
 using Atlas.Agent.Security;
@@ -11,31 +14,29 @@ public static class Program
     {
         Console.WriteLine("Atlas Update Agent starting...");
 
-        // Canonical disk layout (ProgramData-based)
         var paths = AppPaths.Resolve();
-        Directory.CreateDirectory(paths.DataDir);
-        Directory.CreateDirectory(paths.ArtifactsDir);
-        Directory.CreateDirectory(paths.LicensesDir);
+        paths.EnsureAll();
 
-        // DB bootstrap (local, offline)
+        // DB bootstrap (local-only, no network)
         await SqliteBootstrap.EnsureDbAsync(paths.DbPath);
 
-        // Device identity (local, deterministic)
+        // Device identity (stable + deterministic)
         var deviceId = DeviceIdentity.GetOrCreateDeviceId(paths.DeviceSaltPath);
-        Console.WriteLine($"device_id = {deviceId[..12]}…");
+        Console.WriteLine($"device_id = {(deviceId.Length >= 12 ? deviceId[..12] + "…" : deviceId)}");
 
-        // Licensing (local file + signature verification; offline enforcement)
+        // Licensing (offline verify + tier caps)
         var licenseService = new LicenseService(paths);
 
-        // Router is the enforcement boundary.
-        var router = new CommandRouter(paths, deviceId, licenseService);
+        // Engines (wire what exists now)
+        var winget = new WingetScan(new WingetRunner());
 
-        // IPC named pipe server
+        // Router is the enforcement boundary
+        var router = new CommandRouter(paths, deviceId, licenseService, winget);
+
+        // IPC server
         var server = new IpcServer(pipeName: "atlas-update", router);
 
         Console.WriteLine(@"IPC listening on named pipe: \\.\pipe\atlas-update");
-
-        // Long-running server loop (Ctrl+C handled by host/svc wrapper in production)
         await server.RunAsync();
     }
 }
