@@ -1,22 +1,21 @@
-using System;
-
 namespace Atlas.Agent.Licensing;
-
-public static class LicenseGates
-{
-    public static void Require(bool condition, string message)
-    {
-        if (!condition) throw new LicenseDeniedException(message);
-    }
-
-    public static void RequireFeature(Feature enabled, Feature required, string actionName)
-    {
-        if ((enabled & required) != required)
-            throw new LicenseDeniedException($"{actionName} not licensed. Required={required}.");
-    }
-}
 
 public sealed class LicenseDeniedException : Exception
 {
     public LicenseDeniedException(string message) : base(message) { }
+}
+
+public static class LicenseGates
+{
+    public static void RequireFeature(Feature licensedFeatures, Feature required, string featureName)
+    {
+        if ((licensedFeatures & required) != required)
+            throw new LicenseDeniedException($"{featureName} not licensed.");
+    }
+
+    public static void RequireLicensed(bool isLicensed, string messageIfNotLicensed)
+    {
+        if (!isLicensed)
+            throw new LicenseDeniedException(messageIfNotLicensed);
+    }
 }
