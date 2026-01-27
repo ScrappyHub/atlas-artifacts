@@ -1,12 +1,22 @@
+using System;
+
 namespace Atlas.Agent.Licensing;
 
 public static class LicenseGates
 {
-    public static IpcResponse Require(License lic, Feature f, string actionName)
+    public static void Require(bool condition, string message)
     {
-        if (!lic.Has(f))
-            return IpcResponse.Fail($"{actionName} not licensed. Required={f}. Tier={lic.Tier}.");
-
-        return IpcResponse.Ok();
+        if (!condition) throw new LicenseDeniedException(message);
     }
+
+    public static void RequireFeature(Feature enabled, Feature required, string actionName)
+    {
+        if ((enabled & required) != required)
+            throw new LicenseDeniedException($"{actionName} not licensed. Required={required}.");
+    }
+}
+
+public sealed class LicenseDeniedException : Exception
+{
+    public LicenseDeniedException(string message) : base(message) { }
 }
