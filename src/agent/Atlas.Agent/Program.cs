@@ -20,7 +20,8 @@ public static class Program
         var cts = new CancellationTokenSource();
         Console.CancelKeyPress += (_, e) => { e.Cancel = true; cts.Cancel(); };
 
-        // Licensing (local, offline). Keep your existing implementation.
+        // Licensing (local, offline)
+        // Keep your current LicenseService implementation (whatever is already compiling).
         var license = new LicenseService();
         license.Load();
 
@@ -28,7 +29,7 @@ public static class Program
         var runStore = new RunStore(paths.DbPath);
         var artifacts = new ArtifactWriter(paths.RunsRoot);
 
-        // Engine (Windows-only execution; still safe to construct everywhere)
+        // Engine (Windows-only execution; safe to construct anywhere)
         var winget = new WingetScan(new WingetRunner());
 
         // IPC
