@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas-update.local/schemas/license.schema.json",
+  "title": "Atlas Update License",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "license_id",
+    "customer",
+    "tier",
+    "device_limit",
+    "features",
+    "issued_at",
+    "expires_at"
+  ],
+  "properties": {
+    "license_id": { "type": "string", "minLength": 1 },
+    "customer": { "type": "string", "minLength": 1 },
+    "tier": { "type": "string", "enum": ["solo", "pro", "business", "enterprise"] },
+    "device_limit": { "type": "integer", "minimum": 1 },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "winget_scan",
+          "artifacts",
+          "rollback",
+          "export_logs",
+          "automation"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" }
+  }
+}
