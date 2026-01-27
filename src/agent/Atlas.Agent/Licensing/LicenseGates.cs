@@ -1,10 +1,12 @@
+using System;
+
 namespace Atlas.Agent.Licensing;
 
-public sealed class LicenseDeniedException : Exception
-{
-    public LicenseDeniedException(string message) : base(message) { }
-}
-
+/// <summary>
+/// Canonical license enforcement gates.
+/// - Router/handlers must call these for every gated feature.
+/// - No UI/checkbox "honor system".
+/// </summary>
 public static class LicenseGates
 {
     public static void RequireFeature(Feature licensedFeatures, Feature required, string featureName)
@@ -13,9 +15,15 @@ public static class LicenseGates
             throw new LicenseDeniedException($"{featureName} not licensed.");
     }
 
-    public static void RequireLicensed(bool isLicensed, string messageIfNotLicensed)
+    public static void RequireNotExpired(DateTimeOffset nowUtc, DateTimeOffset? expiresAtUtc)
     {
-        if (!isLicensed)
-            throw new LicenseDeniedException(messageIfNotLicensed);
+        if (expiresAtUtc is null) return;
+        if (expiresAtUtc.Value <= nowUtc)
+            throw new LicenseDeniedException("License expired.");
     }
+}
+
+public sealed class LicenseDeniedException : Exception
+{
+    public LicenseDeniedException(string message) : base(message) { }
 }
