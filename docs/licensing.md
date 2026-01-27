@@ -1,24 +1,27 @@
-# Atlas Agent — Canonical Licensing (Contract)
+# Atlas Agent — Canonical Licensing Contract
 
 This document is the non-negotiable, canonical contract for licensing in Atlas.Agent.
 
+## Goals (non-negotiable)
+
+- The agent MUST run offline.
+- Licensing MUST be enforced locally at runtime.
+- Editing license JSON MUST NOT unlock features (signature required).
+- License tier MUST cap allowed features and device_limit.
+
 ## Files on disk (Windows)
 
-All licensing files live under ProgramData:
+All agent data lives under ProgramData:
 
 C:\ProgramData\Atlas\Agent\
   licenses\
     atlas.license.json
     atlas.license.sig
-
-Additional agent data:
-
-C:\ProgramData\Atlas\Agent\
   runs\
   logs\
   atlas.db
 
-The agent MUST be able to run offline. Licensing is enforced locally.
+The agent MUST create these directories if missing.
 
 ## License payload file
 
