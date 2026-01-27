@@ -15,9 +15,9 @@ public static class AppPaths
     public static string LogsRoot     => Path.Combine(AgentRoot, "logs");
 
     // Canonical licensing paths
-    public static string LicensesRoot    => Path.Combine(AgentRoot, "licenses");
-    public static string LicenseJsonPath => Path.Combine(LicensesRoot, "atlas.license.json");
-    public static string LicenseSigPath  => Path.Combine(LicensesRoot, "atlas.license.sig");
+public static string LicensesRoot => Path.Combine(AgentRoot, "licenses");
+public static string LicenseJsonPath => Path.Combine(LicensesRoot, "atlas.license.json");
+public static string LicenseSigPath  => Path.Combine(LicensesRoot, "atlas.license.sig");
 
     public static void EnsureAll()
     {
@@ -28,3 +28,4 @@ public static class AppPaths
         Directory.CreateDirectory(LicensesRoot);
     }
 }
+
