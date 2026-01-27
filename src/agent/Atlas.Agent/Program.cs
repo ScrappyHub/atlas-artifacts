@@ -1,71 +1,46 @@
-<<<<<<< HEAD
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Atlas.Agent.Engines.Winget;
 using Atlas.Agent.IPC;
-using Atlas.Agent.Storage;
 using Atlas.Agent.Licensing;
-using Atlas.Agent.Security;
+using Atlas.Agent.Logging;
+using Atlas.Agent.Storage;
 
 namespace Atlas.Agent;
 
 public static class Program
 {
-    public static async Task Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
-        Console.WriteLine("Atlas Update Agent starting...");
+        AppPaths.EnsureAll();
 
-        var paths = AppPaths.Resolve();
-        Directory.CreateDirectory(paths.DataDir);
-        Directory.CreateDirectory(paths.ArtifactsDir);
+        var cts = new CancellationTokenSource();
+        Console.CancelKeyPress += (_, e) => { e.Cancel = true; cts.Cancel(); };
 
-        // DB bootstrap
-        await SqliteBootstrap.EnsureDbAsync(paths.DbPath);
+        var license = new LicenseService();
+        license.Load();
 
-        // Device identity
-        var deviceId = DeviceIdentity.GetOrCreateDeviceId(paths.DeviceSaltPath);
-        Console.WriteLine($"device_id = {deviceId[..12]}…");
+        var runStore = new RunStore(AppPaths.DbPath);
+        var artifacts = new ArtifactWriter(AppPaths.RunsRoot);
 
-        // Licensing (Phase 1 local token file)
-        var licenseService = new LicenseService(paths);
-        var licenseStatus = await licenseService.GetLicenseStatusAsync(deviceId);
+        var winget = new WingetScan(new WingetRunner());
+        var router = new CommandRouter(winget);
+        var ipc = new IpcServer(router);
 
-        // Start IPC server
-        var router = new CommandRouter(paths, deviceId, licenseService);
-        var server = new IpcServer(pipeName: "atlas-update", router);
+        await ipc.StartAsync(cts.Token);
 
-        Console.WriteLine("IPC listening on named pipe: \\\\.\\pipe\\atlas-update");
-        await server.RunAsync();
+        var ping = await ipc.DispatchAsync(new IpcRequest(IpcCommand.Ping), cts.Token);
+        Console.WriteLine($"PING: ok={ping.Ok} msg={ping.Message}");
+
+        var scan = await ipc.DispatchAsync(new IpcRequest(IpcCommand.ScanWinget), cts.Token);
+        var runId = Guid.NewGuid().ToString("n");
+        runStore.Insert(runId, "winget_scan", scan);
+        artifacts.WriteJson(runId, "winget_scan", scan);
+
+        Console.WriteLine("Atlas.Agent baseline finished.");
+        await ipc.StopAsync(cts.Token);
+
+        return 0;
     }
 }
-=======
-using Atlas.Agent.IPC;
-using Atlas.Agent.Storage;
-using Atlas.Agent.Licensing;
-using Atlas.Agent.Security;
-
-namespace Atlas.Agent;
-
-public static class Program
-{
-    public static async Task Main(string[] args)
-    {
-        Console.WriteLine(""Atlas Update Agent starting..."");
-
-        var paths = AppPaths.Resolve();
-        Directory.CreateDirectory(paths.DataDir);
-        Directory.CreateDirectory(paths.ArtifactsDir);
-
-        await SqliteBootstrap.EnsureDbAsync(paths.DbPath);
-
-        var deviceId = DeviceIdentity.GetOrCreateDeviceId(paths.DeviceSaltPath);
-        Console.WriteLine($""device_id = {deviceId[..12]}…"");
-
-        var licenseService = new LicenseService(paths);
-        _ = await licenseService.GetLicenseStatusAsync(deviceId);
-
-        var router = new CommandRouter(paths, deviceId, licenseService);
-        var server = new IpcServer(pipeName: ""atlas-update"", router);
-
-        Console.WriteLine(""IPC listening on named pipe: \\\\.\\pipe\\atlas-update"");
-        await server.RunAsync();
-    }
-}
->>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

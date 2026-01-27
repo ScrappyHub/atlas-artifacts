@@ -1,105 +1,19 @@
-<<<<<<< HEAD
-using System.Text.Json;
-
 namespace Atlas.Agent.Licensing;
 
 public sealed class LicenseService
 {
-    private readonly AppPaths _paths;
+    public bool IsLicensed { get; private set; }
+    public string? LicenseId { get; private set; }
 
-    public LicenseService(AppPaths paths)
+    public void Load()
     {
-        _paths = paths;
+        IsLicensed = false;
+        LicenseId = null;
     }
 
-    public async Task<object> GetLicenseStatusAsync(string deviceId)
+    public void SetLicensed(string licenseId)
     {
-        // Phase 1: local token file (optional). If missing → trial.
-        if (!File.Exists(_paths.LicenseTokenPath))
-        {
-            return new
-            {
-                state = "trial",
-                tier = "tier1_personal",
-                max_devices = 1,
-                device_id = deviceId,
-                enrollment_state = "active",
-                expires_at = (string?)null,
-                grace_ends_at = (string?)null
-            };
-        }
-
-        using var fs = File.OpenRead(_paths.LicenseTokenPath);
-        var doc = await JsonDocument.ParseAsync(fs);
-
-        // Expected minimal fields (you can harden later)
-        var tier = doc.RootElement.GetProperty("tier").GetString() ?? "tier1_personal";
-        var maxDevices = doc.RootElement.GetProperty("max_devices").GetInt32();
-        var state = doc.RootElement.TryGetProperty("state", out var s) ? (s.GetString() ?? "active") : "active";
-        var expiresAt = doc.RootElement.TryGetProperty("expires_at", out var e) ? e.GetString() : null;
-        var graceEndsAt = doc.RootElement.TryGetProperty("grace_ends_at", out var g) ? g.GetString() : null;
-
-        return new
-        {
-            state,
-            tier,
-            max_devices = maxDevices,
-            device_id = deviceId,
-            enrollment_state = "active",
-            expires_at = expiresAt,
-            grace_ends_at = graceEndsAt
-        };
+        IsLicensed = true;
+        LicenseId = licenseId;
     }
 }
-=======
-using System.Text.Json;
-
-namespace Atlas.Agent.Licensing;
-
-public sealed class LicenseService
-{
-    private readonly Atlas.Agent.AppPaths _paths;
-
-    public LicenseService(Atlas.Agent.AppPaths paths)
-    {
-        _paths = paths;
-    }
-
-    public async Task<object> GetLicenseStatusAsync(string deviceId)
-    {
-        if (!File.Exists(_paths.LicenseTokenPath))
-        {
-            return new
-            {
-                state = ""trial"",
-                tier = ""tier1_personal"",
-                max_devices = 1,
-                device_id = deviceId,
-                enrollment_state = ""active"",
-                expires_at = (string?)null,
-                grace_ends_at = (string?)null
-            };
-        }
-
-        using var fs = File.OpenRead(_paths.LicenseTokenPath);
-        var doc = await JsonDocument.ParseAsync(fs);
-
-        var tier = doc.RootElement.GetProperty(""tier"").GetString() ?? ""tier1_personal"";
-        var maxDevices = doc.RootElement.GetProperty(""max_devices"").GetInt32();
-        var state = doc.RootElement.TryGetProperty(""state"", out var s) ? (s.GetString() ?? ""active"") : ""active"";
-        var expiresAt = doc.RootElement.TryGetProperty(""expires_at"", out var e) ? e.GetString() : null;
-        var graceEndsAt = doc.RootElement.TryGetProperty(""grace_ends_at"", out var g) ? g.GetString() : null;
-
-        return new
-        {
-            state,
-            tier,
-            max_devices = maxDevices,
-            device_id = deviceId,
-            enrollment_state = ""active"",
-            expires_at = expiresAt,
-            grace_ends_at = graceEndsAt
-        };
-    }
-}
->>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))

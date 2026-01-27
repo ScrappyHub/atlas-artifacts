@@ -1,89 +1,32 @@
-<<<<<<< HEAD
+using System;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.Win32;
 
 namespace Atlas.Agent.Security;
 
 public static class DeviceIdentity
 {
-    public static string GetOrCreateDeviceId(string saltPath)
+    // Minimal, stable device fingerprint.
+    // NOTE: This is not "hardware attestation" — just a deterministic token for local correlation.
+    public static string GetDeviceId()
     {
-        var salt = LoadOrCreateSalt(saltPath);
-        var fp = GetFingerprintMaterial();
-        var raw = $"{fp}|{Convert.ToHexString(salt)}";
+        var machine = Environment.MachineName ?? "";
+        var user = Environment.UserName ?? "";
+        var os = Environment.OSVersion.VersionString ?? "";
 
-        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(raw));
-        return Convert.ToHexString(hash).ToLowerInvariant();
+        var input = $"{machine}|{user}|{os}";
+        return Sha256Hex(input);
     }
 
-    private static byte[] LoadOrCreateSalt(string saltPath)
+    private static string Sha256Hex(string s)
     {
-        if (File.Exists(saltPath))
-            return Convert.FromBase64String(File.ReadAllText(saltPath).Trim());
+        var bytes = Encoding.UTF8.GetBytes(s);
+        var hash = SHA256.HashData(bytes);
 
-        var salt = RandomNumberGenerator.GetBytes(32);
-        File.WriteAllText(saltPath, Convert.ToBase64String(salt));
-        return salt;
-    }
+        var sb = new StringBuilder(hash.Length * 2);
+        foreach (var b in hash)
+            sb.Append(b.ToString("x2"));
 
-    private static string GetFingerprintMaterial()
-    {
-        // Privacy rule: do NOT store raw values in artifacts/logs. Only use derived hash.
-        // Windows MachineGuid is relatively stable.
-        try
-        {
-            using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Cryptography");
-            var mg = key?.GetValue("MachineGuid")?.ToString() ?? "unknown";
-            return $"win_machineguid:{mg}";
-        }
-        catch
-        {
-            return "win_machineguid:unavailable";
-        }
+        return sb.ToString();
     }
 }
-=======
-using System.Security.Cryptography;
-using System.Text;
-using Microsoft.Win32;
-
-namespace Atlas.Agent.Security;
-
-public static class DeviceIdentity
-{
-    public static string GetOrCreateDeviceId(string saltPath)
-    {
-        var salt = LoadOrCreateSalt(saltPath);
-        var fp = GetFingerprintMaterial();
-        var raw = $""{fp}|{Convert.ToHexString(salt)}"";
-
-        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(raw));
-        return Convert.ToHexString(hash).ToLowerInvariant();
-    }
-
-    private static byte[] LoadOrCreateSalt(string saltPath)
-    {
-        if (File.Exists(saltPath))
-            return Convert.FromBase64String(File.ReadAllText(saltPath).Trim());
-
-        var salt = RandomNumberGenerator.GetBytes(32);
-        File.WriteAllText(saltPath, Convert.ToBase64String(salt));
-        return salt;
-    }
-
-    private static string GetFingerprintMaterial()
-    {
-        try
-        {
-            using var key = Registry.LocalMachine.OpenSubKey(@""SOFTWARE\\Microsoft\\Cryptography"");
-            var mg = key?.GetValue(""MachineGuid"")?.ToString() ?? ""unknown"";
-            return $""win_machineguid:{mg}"";
-        }
-        catch
-        {
-            return ""win_machineguid:unavailable"";
-        }
-    }
-}
->>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))
