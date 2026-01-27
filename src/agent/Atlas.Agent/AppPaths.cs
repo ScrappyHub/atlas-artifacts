@@ -3,29 +3,53 @@ using System.IO;
 
 namespace Atlas.Agent;
 
-public static class AppPaths
+public sealed record AppPaths(
+    string RootDir,
+    string DataDir,
+    string LicensesDir,
+    string RunsDir,
+    string LogsDir,
+    string DbPath,
+    string DeviceSaltPath,
+    string LicenseJsonPath,
+    string LicenseSigPath
+)
 {
-    public static string CompanyRoot => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-        "Atlas");
-
-    public static string AgentRoot    => Path.Combine(CompanyRoot, "Agent");
-    public static string RunsRoot     => Path.Combine(AgentRoot, "runs");
-    public static string DbPath       => Path.Combine(AgentRoot, "atlas.db");
-    public static string LogsRoot     => Path.Combine(AgentRoot, "logs");
-
-    // Canonical licensing paths
-public static string LicensesRoot => Path.Combine(AgentRoot, "licenses");
-public static string LicenseJsonPath => Path.Combine(LicensesRoot, "atlas.license.json");
-public static string LicenseSigPath  => Path.Combine(LicensesRoot, "atlas.license.sig");
-
-    public static void EnsureAll()
+    public static AppPaths Resolve()
     {
-        Directory.CreateDirectory(CompanyRoot);
-        Directory.CreateDirectory(AgentRoot);
-        Directory.CreateDirectory(RunsRoot);
-        Directory.CreateDirectory(LogsRoot);
-        Directory.CreateDirectory(LicensesRoot);
+        // Canonical base: C:\ProgramData\Atlas\Agent
+        var programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        var root = Path.Combine(programData, "Atlas", "Agent");
+
+        var dataDir = root; // keep "Agent" root as the data dir
+        var licensesDir = Path.Combine(root, "licenses");
+        var runsDir = Path.Combine(root, "runs");
+        var logsDir = Path.Combine(root, "logs");
+
+        var dbPath = Path.Combine(root, "atlas.db");
+        var deviceSaltPath = Path.Combine(root, "device.salt");
+
+        var licenseJson = Path.Combine(licensesDir, "atlas.license.json");
+        var licenseSig = Path.Combine(licensesDir, "atlas.license.sig");
+
+        return new AppPaths(
+            RootDir: root,
+            DataDir: dataDir,
+            LicensesDir: licensesDir,
+            RunsDir: runsDir,
+            LogsDir: logsDir,
+            DbPath: dbPath,
+            DeviceSaltPath: deviceSaltPath,
+            LicenseJsonPath: licenseJson,
+            LicenseSigPath: licenseSig
+        );
+    }
+
+    public void EnsureAll()
+    {
+        Directory.CreateDirectory(RootDir);
+        Directory.CreateDirectory(LicensesDir);
+        Directory.CreateDirectory(RunsDir);
+        Directory.CreateDirectory(LogsDir);
     }
 }
-
