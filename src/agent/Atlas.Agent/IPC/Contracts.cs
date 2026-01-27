@@ -20,8 +20,6 @@ public sealed record IpcResponse(
 
 public static class JsonOpts
 {
-    // Canonical: exact JSON property names as provided (no naming policy),
-    // compact output (WriteIndented=false) for deterministic signing/artifacts.
     public static readonly JsonSerializerOptions Serializer = new()
     {
         PropertyNamingPolicy = null,
