@@ -2,30 +2,38 @@
 
 This document is the non-negotiable, canonical contract for licensing in Atlas.Agent.
 
-## Goals
+## Disk layout (canonical)
 
-- **Offline-first**: Agent MUST validate and enforce licensing with **no network calls**.
-- **Cryptographically enforced**: A license is valid only if the signature verifies.
-- **Deterministic**: The same license files produce the same effective entitlements.
-- **Enforced at runtime**: Feature access MUST be gated in router/handlers.
-
----
-
-## Files on disk (Windows)
-
-All licensing files live under ProgramData:
+### Windows
+All agent files live under:
 
 C:\ProgramData\Atlas\Agent\
   licenses\
     atlas.license.json
     atlas.license.sig
-
-Additional agent data:
-
-C:\ProgramData\Atlas\Agent\
   runs\
   logs\
   atlas.db
+
+### macOS (canonical target)
+Primary (system):
+
+/Library/Application Support/Atlas/Agent/
+  licenses/
+  runs/
+  logs/
+  atlas.db
+
+### Linux (canonical target)
+Primary (system):
+
+/var/lib/atlas/agent/
+  licenses/
+  runs/
+  logs/
+  atlas.db
+
+> The agent MUST be able to run offline. Licensing is enforced locally.
 
 ---
 
@@ -85,17 +93,11 @@ Filename: atlas.license.sig
 
 Format: Base64-encoded RSA-SHA256 signature computed over the EXACT bytes of atlas.license.json.
 
-    Algorithm: RSA + SHA-256
+Algorithm: RSA + SHA-256
+Padding: PKCS#1 v1.5
+Verification: performed locally by Atlas.Agent using embedded public key.
 
-    Padding: PKCS#1 v1.5
-
-    Verification: performed locally by Atlas.Agent using embedded public key
-
-    If signature verification fails, the agent MUST treat the machine as unlicensed.
-
-Expiration
-
-If expires_at is not null and is in the past (UTC), the license is expired and MUST be treated as unlicensed.
+If signature verification fails, the agent MUST treat the machine as unlicensed.
 Tier policy (canonical caps)
 
 Tier defines an upper bound. The payload may request LESS than the tier allows, but NEVER MORE.
@@ -139,21 +141,22 @@ enterprise
 
     features: winget_scan, artifacts, export_logs, rollback, automation
 
-Offline operation (canonical)
+Expiration
 
-No network call is required to validate the license.
-All validation is local:
+If expires_at is not null and is in the past (UTC), the license is expired and MUST be treated as unlicensed.
+Offline operation
+
+No network call is required to validate the license. All validation is local:
 
     verify signature
 
     apply tier caps
 
-    enforce at runtime
+    enforce at runtime (router/handlers)
 
 Runtime enforcement (canonical)
 
 All feature access MUST be gated in the command router / handlers.
-
 If a feature is not licensed, the agent MUST return a failure response.
 
 This is enforcement, not UI.
