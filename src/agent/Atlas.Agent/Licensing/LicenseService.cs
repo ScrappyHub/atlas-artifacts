@@ -1,124 +1,78 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 
 namespace Atlas.Agent.Licensing;
 
 public sealed class LicenseService
 {
-    private static readonly JsonSerializerOptions JsonOpts = new()
+    public License Current { get; private set; } = CreateDefault();
+
+    public bool LoadFromDisk(string jsonPath, string sigPath)
     {
-        PropertyNameCaseInsensitive = false,
-        ReadCommentHandling = JsonCommentHandling.Disallow,
-        AllowTrailingCommas = false
-    };
-
-    public License Current { get; private set; } = License.Unlicensed();
-    public bool IsValid { get; private set; }
-    public string? Error { get; private set; }
-
-    /// <summary>
-    /// Loads + verifies license from canonical disk paths:
-    ///   AppPaths.LicenseJsonPath
-    ///   AppPaths.LicenseSigPath
-    /// </summary>
-    public void Load()
-    {
-        IsValid = false;
-        Error = null;
-        Current = License.Unlicensed();
-
-        if (!File.Exists(AppPaths.LicenseJsonPath) || !File.Exists(AppPaths.LicenseSigPath))
+        if (!File.Exists(jsonPath) || !File.Exists(sigPath))
         {
-            Error = "License files not found.";
-            return;
+            Current = CreateDefault();
+            return false;
         }
 
-        byte[] jsonBytes;
-        string sigText;
-
-        try
+        // Verify signature first (never trust JSON without sig)
+        if (!LicenseVerifier.Verify(jsonPath, sigPath))
         {
-            jsonBytes = File.ReadAllBytes(AppPaths.LicenseJsonPath);
-            sigText = File.ReadAllText(AppPaths.LicenseSigPath);
-        }
-        catch (Exception ex)
-        {
-            Error = $"Failed to read license files: {ex.Message}";
-            return;
+            Current = CreateDefault();
+            return false;
         }
 
-        if (!LicenseVerifier.Verify(jsonBytes, sigText))
+        var json = File.ReadAllText(jsonPath);
+        var payload = JsonSerializer.Deserialize<LicensePayload>(json, new JsonSerializerOptions
         {
-            Error = "License signature verification failed.";
-            return;
+            PropertyNameCaseInsensitive = true
+        });
+
+        if (payload is null)
+        {
+            Current = CreateDefault();
+            return false;
         }
 
-        LicensePayload payload;
-        try
-        {
-            payload = JsonSerializer.Deserialize<LicensePayload>(jsonBytes, JsonOpts)
-                      ?? throw new InvalidOperationException("License payload is null.");
-        }
-        catch (Exception ex)
-        {
-            Error = $"License JSON parse failed: {ex.Message}";
-            return;
-        }
+        var tier = TierPolicy.ParseTier(payload.Tier);
+        var requestedFeatures = TierPolicy.ParseFeatures(payload.Features);
+        var (features, devices) = TierPolicy.ApplyPolicy(tier, payload.DeviceLimit, requestedFeatures);
 
-        // Basic field validation
-        if (string.IsNullOrWhiteSpace(payload.LicenseId) ||
-            string.IsNullOrWhiteSpace(payload.Customer) ||
-            string.IsNullOrWhiteSpace(payload.Tier) ||
-            payload.DeviceLimit < 1 ||
-            payload.Features is null ||
-            payload.Features.Count < 1)
-        {
-            Error = "License payload validation failed (required fields).";
-            return;
-        }
-
+        // Expiry gate
         var now = DateTimeOffset.UtcNow;
-        if (payload.ExpiresAt.HasValue && now > payload.ExpiresAt.Value)
+        if (TierPolicy.IsExpired(payload.ExpiresAt, now))
         {
-            Error = "License is expired.";
-            return;
-        }
-
-        // Convert features strings -> flags (canonical mapping)
-        var flags = Feature.None;
-        foreach (var f in payload.Features.Where(x => !string.IsNullOrWhiteSpace(x)))
-        {
-            flags |= f.Trim() switch
-            {
-                "winget_scan" => Feature.WingetScan,
-                "artifacts"   => Feature.Artifacts,
-                "rollback"    => Feature.Rollback,
-                "export_logs" => Feature.ExportLogs,
-                "automation"  => Feature.Automation,
-                _             => Feature.None // unknown feature string is ignored (safe)
-            };
+            Current = CreateDefault();
+            return false;
         }
 
         Current = new License(
-            LicenseId: payload.LicenseId,
-            Customer: payload.Customer,
-            Tier: payload.Tier,
-            DeviceLimit: payload.DeviceLimit,
-            Features: flags,
-            IssuedAt: payload.IssuedAt,
+            LicenseId: payload.LicenseId ?? "lic_free",
+            Customer: payload.Customer ?? "unlicensed",
+            Tier: tier,
+            DeviceLimit: devices,
+            Features: features,
+            IssuedAt: payload.IssuedAt == default ? now : payload.IssuedAt,
             ExpiresAt: payload.ExpiresAt
         );
 
-        IsValid = true;
+        return true;
     }
 
-    public bool HasFeature(Feature f) => IsValid && Current.HasFeature(f);
-
-    public void Require(Feature f)
+    private static License CreateDefault()
     {
-        if (!HasFeature(f))
-            throw new InvalidOperationException($"Feature not licensed: {f}");
+        var now = DateTimeOffset.UtcNow;
+        var (features, devices) = TierPolicy.ApplyPolicy(Tier.Free, 1, Feature.WingetScan);
+
+        return new License(
+            LicenseId: "lic_free",
+            Customer: "unlicensed",
+            Tier: Tier.Free,
+            DeviceLimit: devices,
+            Features: features,
+            IssuedAt: now,
+            ExpiresAt: null
+        );
     }
 }
