@@ -1,105 +1,124 @@
-<<<<<<< HEAD
+using System;
+using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace Atlas.Agent.Licensing;
 
 public sealed class LicenseService
 {
-    private readonly AppPaths _paths;
-
-    public LicenseService(AppPaths paths)
+    private static readonly JsonSerializerOptions JsonOpts = new()
     {
-        _paths = paths;
-    }
+        PropertyNameCaseInsensitive = false,
+        ReadCommentHandling = JsonCommentHandling.Disallow,
+        AllowTrailingCommas = false
+    };
 
-    public async Task<object> GetLicenseStatusAsync(string deviceId)
+    public License Current { get; private set; } = License.Unlicensed();
+    public bool IsValid { get; private set; }
+    public string? Error { get; private set; }
+
+    /// <summary>
+    /// Loads + verifies license from canonical disk paths:
+    ///   AppPaths.LicenseJsonPath
+    ///   AppPaths.LicenseSigPath
+    /// </summary>
+    public void Load()
     {
-        // Phase 1: local token file (optional). If missing → trial.
-        if (!File.Exists(_paths.LicenseTokenPath))
+        IsValid = false;
+        Error = null;
+        Current = License.Unlicensed();
+
+        if (!File.Exists(AppPaths.LicenseJsonPath) || !File.Exists(AppPaths.LicenseSigPath))
         {
-            return new
+            Error = "License files not found.";
+            return;
+        }
+
+        byte[] jsonBytes;
+        string sigText;
+
+        try
+        {
+            jsonBytes = File.ReadAllBytes(AppPaths.LicenseJsonPath);
+            sigText = File.ReadAllText(AppPaths.LicenseSigPath);
+        }
+        catch (Exception ex)
+        {
+            Error = $"Failed to read license files: {ex.Message}";
+            return;
+        }
+
+        if (!LicenseVerifier.Verify(jsonBytes, sigText))
+        {
+            Error = "License signature verification failed.";
+            return;
+        }
+
+        LicensePayload payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<LicensePayload>(jsonBytes, JsonOpts)
+                      ?? throw new InvalidOperationException("License payload is null.");
+        }
+        catch (Exception ex)
+        {
+            Error = $"License JSON parse failed: {ex.Message}";
+            return;
+        }
+
+        // Basic field validation
+        if (string.IsNullOrWhiteSpace(payload.LicenseId) ||
+            string.IsNullOrWhiteSpace(payload.Customer) ||
+            string.IsNullOrWhiteSpace(payload.Tier) ||
+            payload.DeviceLimit < 1 ||
+            payload.Features is null ||
+            payload.Features.Count < 1)
+        {
+            Error = "License payload validation failed (required fields).";
+            return;
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        if (payload.ExpiresAt.HasValue && now > payload.ExpiresAt.Value)
+        {
+            Error = "License is expired.";
+            return;
+        }
+
+        // Convert features strings -> flags (canonical mapping)
+        var flags = Feature.None;
+        foreach (var f in payload.Features.Where(x => !string.IsNullOrWhiteSpace(x)))
+        {
+            flags |= f.Trim() switch
             {
-                state = "trial",
-                tier = "tier1_personal",
-                max_devices = 1,
-                device_id = deviceId,
-                enrollment_state = "active",
-                expires_at = (string?)null,
-                grace_ends_at = (string?)null
+                "winget_scan" => Feature.WingetScan,
+                "artifacts"   => Feature.Artifacts,
+                "rollback"    => Feature.Rollback,
+                "export_logs" => Feature.ExportLogs,
+                "automation"  => Feature.Automation,
+                _             => Feature.None // unknown feature string is ignored (safe)
             };
         }
 
-        using var fs = File.OpenRead(_paths.LicenseTokenPath);
-        var doc = await JsonDocument.ParseAsync(fs);
+        Current = new License(
+            LicenseId: payload.LicenseId,
+            Customer: payload.Customer,
+            Tier: payload.Tier,
+            DeviceLimit: payload.DeviceLimit,
+            Features: flags,
+            IssuedAt: payload.IssuedAt,
+            ExpiresAt: payload.ExpiresAt
+        );
 
-        // Expected minimal fields (you can harden later)
-        var tier = doc.RootElement.GetProperty("tier").GetString() ?? "tier1_personal";
-        var maxDevices = doc.RootElement.GetProperty("max_devices").GetInt32();
-        var state = doc.RootElement.TryGetProperty("state", out var s) ? (s.GetString() ?? "active") : "active";
-        var expiresAt = doc.RootElement.TryGetProperty("expires_at", out var e) ? e.GetString() : null;
-        var graceEndsAt = doc.RootElement.TryGetProperty("grace_ends_at", out var g) ? g.GetString() : null;
+        IsValid = true;
+    }
 
-        return new
-        {
-            state,
-            tier,
-            max_devices = maxDevices,
-            device_id = deviceId,
-            enrollment_state = "active",
-            expires_at = expiresAt,
-            grace_ends_at = graceEndsAt
-        };
+    public bool HasFeature(Feature f) => IsValid && Current.HasFeature(f);
+
+    public void Require(Feature f)
+    {
+        if (!HasFeature(f))
+            throw new InvalidOperationException($"Feature not licensed: {f}");
     }
 }
-=======
-using System.Text.Json;
-
-namespace Atlas.Agent.Licensing;
-
-public sealed class LicenseService
-{
-    private readonly Atlas.Agent.AppPaths _paths;
-
-    public LicenseService(Atlas.Agent.AppPaths paths)
-    {
-        _paths = paths;
-    }
-
-    public async Task<object> GetLicenseStatusAsync(string deviceId)
-    {
-        if (!File.Exists(_paths.LicenseTokenPath))
-        {
-            return new
-            {
-                state = ""trial"",
-                tier = ""tier1_personal"",
-                max_devices = 1,
-                device_id = deviceId,
-                enrollment_state = ""active"",
-                expires_at = (string?)null,
-                grace_ends_at = (string?)null
-            };
-        }
-
-        using var fs = File.OpenRead(_paths.LicenseTokenPath);
-        var doc = await JsonDocument.ParseAsync(fs);
-
-        var tier = doc.RootElement.GetProperty(""tier"").GetString() ?? ""tier1_personal"";
-        var maxDevices = doc.RootElement.GetProperty(""max_devices"").GetInt32();
-        var state = doc.RootElement.TryGetProperty(""state"", out var s) ? (s.GetString() ?? ""active"") : ""active"";
-        var expiresAt = doc.RootElement.TryGetProperty(""expires_at"", out var e) ? e.GetString() : null;
-        var graceEndsAt = doc.RootElement.TryGetProperty(""grace_ends_at"", out var g) ? g.GetString() : null;
-
-        return new
-        {
-            state,
-            tier,
-            max_devices = maxDevices,
-            device_id = deviceId,
-            enrollment_state = ""active"",
-            expires_at = expiresAt,
-            grace_ends_at = graceEndsAt
-        };
-    }
-}
->>>>>>> 9673112 (chore: bootstrap Atlas Update canonical repo (docs, schemas, agent skeleton))
