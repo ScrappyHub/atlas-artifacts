@@ -59,6 +59,8 @@ Canonical JSON shape:
   "expires_at": null
 }
 
+---
+
 Canonical meaning of fields
 
     license_id: unique ID (string)
