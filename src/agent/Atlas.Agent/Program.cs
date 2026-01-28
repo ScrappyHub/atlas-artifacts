@@ -307,6 +307,43 @@ static bool TryAppendLinuxPackages(
 
     return true;
 }
+
+static (int ExitCode, string StdOut, string StdErr) RunProcess(string fileName, string args)
+{
+    try
+    {
+        var psi = new System.Diagnostics.ProcessStartInfo
+        {
+            FileName = fileName,
+            Arguments = args,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        using var p = System.Diagnostics.Process.Start(psi);
+        if (p == null) return (-1, "", "Process start returned null.");
+
+        var stdout = p.StandardOutput.ReadToEnd();
+        var stderr = p.StandardError.ReadToEnd();
+
+        // Wait briefly; if it times out, treat as error but don't crash agent.
+        if (!p.WaitForExit(10_000))
+        {
+            try { p.Kill(entireProcessTree: true); } catch { }
+            return (-1, stdout, "Timed out");
+        }
+
+        return (p.ExitCode, stdout, stderr);
+    }
+    catch (Exception ex)
+    {
+        // Common on Linux when binary not found: Win32Exception
+        return (-1, "", ex.Message);
+    }
+}
+
 static async Task<string> DownloadAsync(string payloadJson, HttpClient http, string cacheDir)
 {
     // payload: { "url": "...", "fileName": "...optional..." }
@@ -454,6 +491,7 @@ public sealed record InventoryError(
     int code,
     string message
 );
+
 
 
 
