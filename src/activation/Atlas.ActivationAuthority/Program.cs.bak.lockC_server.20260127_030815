@@ -1,0 +1,51 @@
+using System.Collections.Concurrent;
+using Atlas.ActivationContracts;
+
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+
+// In-memory stub store (replace with DB later: per-tenant ledgers, audit log, revocations)
+var devicesByLicense = new ConcurrentDictionary<string, ConcurrentDictionary<string, byte>>();
+
+// POST /v1/activation/claim
+// Canonical flow: server is source of truth; agent caches short-lived grant.
+app.MapPost("/v1/activation/claim", (ActivationClaimRequest req) =>
+{
+    if (string.IsNullOrWhiteSpace(req.TenantId) ||
+        string.IsNullOrWhiteSpace(req.CustomerId) ||
+        string.IsNullOrWhiteSpace(req.LicenseId) ||
+        string.IsNullOrWhiteSpace(req.DeviceId))
+    {
+        return Results.BadRequest(new ActivationClaimResponse(false, "invalid_request", null));
+    }
+
+    var key = $"{req.TenantId}:{req.LicenseId}";
+    var set = devicesByLicense.GetOrAdd(key, _ => new ConcurrentDictionary<string, byte>());
+
+    // In real implementation:
+    //  - lookup license entitlements (device_limit, revocations, contract state)
+    //  - enforce device_limit server-side
+    //  - write audit log entry
+    //  - return signed grant token
+
+    set.TryAdd(req.DeviceId, 1);
+
+    // Stub: allow always, short TTL grant
+    var now = DateTimeOffset.UtcNow;
+    var grant = new ActivationGrant(
+        TenantId: req.TenantId,
+        CustomerId: req.CustomerId,
+        LicenseId: req.LicenseId,
+        DeviceId: req.DeviceId,
+        IssuedAtUtc: now,
+        ExpiresAtUtc: now.AddHours(24),
+        Signature: "stub"
+    );
+
+    return Results.Ok(new ActivationClaimResponse(true, "ok", grant));
+});
+
+// Basic health
+app.MapGet("/health", () => Results.Ok(new { ok = true }));
+
+app.Run();

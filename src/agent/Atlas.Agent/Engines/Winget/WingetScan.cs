@@ -14,13 +14,18 @@ public sealed class WingetScan
     {
         var (code, _, stderr) = await _runner.RunAsync("list", ct);
 
+        var source =
+            !_runner.IsSupported ? "winget (not_supported)" :
+            string.IsNullOrWhiteSpace(stderr) ? "winget" :
+            $"winget (stderr={stderr.Length})";
+
         return new List<WingetPackage>
         {
             new WingetPackage(
                 Id: "winget:list",
                 Name: $"exit={code}",
                 Version: "n/a",
-                Source: string.IsNullOrWhiteSpace(stderr) ? "winget" : $"winget (stderr={stderr.Length})")
+                Source: source)
         };
     }
 }

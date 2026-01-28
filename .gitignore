@@ -11,3 +11,5 @@ obj/
 # Node (UI later)
 node_modules/
 dist/
+# Atlas dev keys (never commit)
+dev-keys/

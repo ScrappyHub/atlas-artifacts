@@ -1,0 +1,42 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "Atlas.Dev": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://127.0.0.1:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ATLAS_ACTIVATION_STORE": "memory",
+        "ATLAS_GRANT_TTL_HOURS": "24",
+        "ATLAS_SIGNING_KEY": "dev-only-change-me"
+      }
+    },
+    "Atlas.Dev.Watch": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://127.0.0.1:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ATLAS_ACTIVATION_STORE": "memory",
+        "ATLAS_GRANT_TTL_HOURS": "24",
+        "ATLAS_SIGNING_KEY": "dev-only-change-me"
+      }
+    },
+    "Atlas.Dev.Postgres": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://127.0.0.1:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ATLAS_ACTIVATION_STORE": "postgres",
+        "ATLAS_GRANT_TTL_HOURS": "24",
+        "ATLAS_SIGNING_KEY": "dev-only-change-me",
+        "ATLAS_DB_CONNECTION": "Host=127.0.0.1;Port=5432;Database=atlas;Username=postgres;Password=postgres"
+      }
+    }
+  }
+}

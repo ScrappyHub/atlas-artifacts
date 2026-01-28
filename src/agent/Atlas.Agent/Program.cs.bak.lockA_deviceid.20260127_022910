@@ -1,0 +1,127 @@
+﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Atlas.Agent.Engines.Winget;
+using Atlas.Agent.IPC;
+using Atlas.Agent.Licensing;
+using Atlas.Agent.Security;
+using Atlas.Agent.Storage;
+
+namespace Atlas.Agent;
+
+public static class Program
+{
+    public static async Task<int> Main(string[] args)
+    {
+        var paths = AppPaths.Resolve();
+        AppPaths.EnsureAll(paths);
+
+        var cts = new CancellationTokenSource();
+        Console.CancelKeyPress += (_, e) => { e.Cancel = true; cts.Cancel(); };
+
+        var deviceId = DeviceIdentity.GetDeviceId() + (Environment.GetEnvironmentVariable("ATLAS_DEVICE_SUFFIX") ?? "");
+
+        var license = new LicenseService(paths);
+        license.Load();
+
+        var runStore = new RunStore(paths.DbPath);
+        var artifacts = new ArtifactWriter(paths.RunsRoot);
+
+        var winget = new WingetScan(new WingetRunner());
+        var router = new CommandRouter(winget, license, deviceId);
+
+        string endpoint;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            endpoint = "atlas-update";
+        }
+        else
+        {
+            var ipcDir = Path.Combine(paths.DataRoot, "ipc");
+            Directory.CreateDirectory(ipcDir);
+            endpoint = Path.Combine(ipcDir, "atlas-update.sock");
+        }
+
+        var ipc = new IpcServer(endpoint, router);
+        await ipc.StartAsync(cts.Token);
+
+        var ping = await ipc.DispatchAsync(IpcRequest.New(IpcCommand.Ping), cts.Token);
+        Console.WriteLine($"PING: ok={ping.Ok} msg={ping.Message}");
+
+        var lic = await ipc.DispatchAsync(IpcRequest.New(IpcCommand.GetLicenseStatus), cts.Token);
+        Console.WriteLine($"LICENSE_CMD: ok={lic.Ok} msg={lic.Message}");
+        DumpLicenseStatus(lic);
+
+        var scan = await ipc.DispatchAsync(IpcRequest.New(IpcCommand.ScanWinget), cts.Token);
+
+        var runId = Guid.NewGuid().ToString("n");
+        runStore.Insert(runId, "winget_scan", scan);
+        artifacts.WriteJson(runId, "winget_scan", scan);
+
+        Console.WriteLine("Atlas.Agent baseline finished.");
+        await ipc.StopAsync(cts.Token);
+
+        return 0;
+    }
+
+    private static void DumpLicenseStatus(IpcResponse resp)
+    {
+        try
+        {
+            if (!resp.Ok)
+            {
+                Console.WriteLine("LICENSE_STATUS: (command failed)");
+                return;
+            }
+
+            if (resp.Data is null)
+            {
+                Console.WriteLine("LICENSE_STATUS: (no data)");
+                return;
+            }
+
+            if (resp.Data is not JsonElement je)
+            {
+                Console.WriteLine("LICENSE_STATUS (raw):");
+                Console.WriteLine(resp.Data.ToString());
+                return;
+            }
+
+            static string Get(JsonElement root, string name)
+            {
+                if (!root.TryGetProperty(name, out var p))
+                    return "(missing)";
+                return p.ValueKind == JsonValueKind.Null ? "null" : p.ToString();
+            }
+
+            Console.WriteLine("LICENSE_STATUS:");
+            Console.WriteLine("  Licensed    = " + Get(je, "Licensed"));
+            Console.WriteLine("  Reason      = " + Get(je, "Reason"));
+
+            var tierRaw = Get(je, "Tier");
+            Console.WriteLine("  TierRaw     = " + tierRaw);
+
+            if (int.TryParse(tierRaw, out var tierInt))
+                Console.WriteLine("  TierName    = " + ((LicenseTier)tierInt).ToString());
+
+            var featuresRaw = Get(je, "Features");
+            Console.WriteLine("  FeaturesRaw = " + featuresRaw);
+
+            if (int.TryParse(featuresRaw, out var featInt))
+                Console.WriteLine("  Features    = " + ((Feature)featInt).ToString());
+
+            Console.WriteLine("  DeviceLimit = " + Get(je, "DeviceLimit"));
+            Console.WriteLine("  LicenseId   = " + Get(je, "LicenseId"));
+            Console.WriteLine("  Customer    = " + Get(je, "Customer"));
+            Console.WriteLine("  IssuedAt    = " + Get(je, "IssuedAt"));
+            Console.WriteLine("  ExpiresAt   = " + Get(je, "ExpiresAt"));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("LICENSE_STATUS: (print_failed) " + ex.Message);
+        }
+    }
+}

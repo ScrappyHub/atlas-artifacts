@@ -1,0 +1,184 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+
+static class Program
+{
+    private const string PrivateKeyName = "atlas-dev-private.pem";
+    private const string PublicKeyName  = "atlas-dev-public.pem";
+
+    static int Main(string[] args)
+    {
+        try
+        {
+            var deviceLimit = GetIntArg(args, "--device-limit", 250);
+            var tier = GetStringArg(args, "--tier", "enterprise"); // free|personal|pro|enterprise (whatever your agent maps)
+            var customer = GetStringArg(args, "--customer", "Dev Customer");
+            var licenseId = GetStringArg(args, "--license-id", "lic_dev_01");
+
+            // Repo root is current working directory when you run from C:\dev\atlas-update
+            var repoRoot = Directory.GetCurrentDirectory();
+
+            var devKeysDir = Path.Combine(repoRoot, "dev-keys");
+            Directory.CreateDirectory(devKeysDir);
+
+            var privPath = Path.Combine(devKeysDir, PrivateKeyName);
+            var pubPath  = Path.Combine(devKeysDir, PublicKeyName);
+
+            using var rsa = LoadOrCreateDevKeypair(privPath, pubPath);
+
+            var licDir = GetCanonicalLicenseDir();
+            Directory.CreateDirectory(licDir);
+
+            var jsonPath = Path.Combine(licDir, "atlas.license.json");
+            var sigPath  = Path.Combine(licDir, "atlas.license.sig");
+
+            // IMPORTANT: exact bytes are signed; keep compact; no trailing newline
+            // features array must match what your agent expects; leaving as your existing set.
+            var issuedAt = DateTimeOffset.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
+
+            var licenseJson =
+                "{" +
+                $"\"license_id\":\"{Escape(licenseId)}\"," +
+                $"\"customer\":\"{Escape(customer)}\"," +
+                $"\"tier\":\"{Escape(tier)}\"," +
+                $"\"device_limit\":{deviceLimit}," +
+                "\"features\":[\"winget_scan\",\"artifacts\",\"rollback\",\"export_logs\",\"automation\"]," +
+                $"\"issued_at\":\"{issuedAt}\"," +
+                "\"expires_at\":null" +
+                "}";
+
+            File.WriteAllBytes(jsonPath, Encoding.UTF8.GetBytes(licenseJson));
+
+            var data = File.ReadAllBytes(jsonPath);
+            var sig = rsa.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            File.WriteAllText(sigPath, Convert.ToBase64String(sig), new UTF8Encoding(false));
+
+            // self-verify
+            var ok = rsa.VerifyData(data, sig, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            if (!ok) throw new Exception("Signature self-verify failed.");
+
+            Console.WriteLine("DEV KEYS:");
+            Console.WriteLine($"  {privPath}");
+            Console.WriteLine($"  {pubPath}");
+            Console.WriteLine("LICENSE:");
+            Console.WriteLine($"  {jsonPath}");
+            Console.WriteLine($"  {sigPath}");
+            Console.WriteLine($"tier={tier} device_limit={deviceLimit}");
+            Console.WriteLine("Signature verified: OK");
+            Console.WriteLine();
+            Console.WriteLine("=== COPY THIS INTO LicenseVerifier.PublicKeyPem ===");
+            Console.WriteLine(File.ReadAllText(pubPath));
+            Console.WriteLine("=== END ===");
+
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"ERR: {ex.Message}");
+            return 1;
+        }
+    }
+
+    private static string GetStringArg(string[] args, string name, string def)
+    {
+        var idx = Array.FindIndex(args, a => string.Equals(a, name, StringComparison.OrdinalIgnoreCase));
+        if (idx < 0 || idx + 1 >= args.Length) return def;
+        return args[idx + 1];
+    }
+
+    private static int GetIntArg(string[] args, string name, int def)
+    {
+        var s = GetStringArg(args, name, def.ToString());
+        return int.TryParse(s, out var v) ? v : def;
+    }
+
+    private static string Escape(string s) => s.Replace("\\", "\\\\").Replace("\"", "\\\"");
+
+    private static RSA LoadOrCreateDevKeypair(string privPath, string pubPath)
+    {
+        if (File.Exists(privPath))
+        {
+            var text = File.ReadAllText(privPath);
+
+            // Quick sanity: PEM must contain a BEGIN line.
+            if (!text.Contains("BEGIN", StringComparison.OrdinalIgnoreCase))
+            {
+                QuarantineBadKey(privPath);
+            }
+            else
+            {
+                try
+                {
+                    var rsa = RSA.Create();
+                    rsa.ImportFromPem(text);
+
+                    if (!File.Exists(pubPath))
+                        File.WriteAllText(pubPath, ExportPublicPem(rsa), new UTF8Encoding(false));
+
+                    return rsa;
+                }
+                catch
+                {
+                    QuarantineBadKey(privPath);
+                }
+            }
+        }
+
+        var created = RSA.Create(2048);
+        File.WriteAllText(privPath, ExportPrivatePem(created), new UTF8Encoding(false));
+        File.WriteAllText(pubPath, ExportPublicPem(created), new UTF8Encoding(false));
+        return created;
+    }
+
+    private static void QuarantineBadKey(string privPath)
+    {
+        try
+        {
+            var stamp = DateTimeOffset.UtcNow.ToString("yyyyMMdd_HHmmss");
+            var bad = privPath + $".bad.{stamp}";
+            File.Move(privPath, bad, overwrite: true);
+        }
+        catch
+        {
+            try { File.Delete(privPath); } catch { }
+        }
+    }
+
+    private static string ExportPrivatePem(RSA rsa)
+    {
+        var pkcs8 = rsa.ExportPkcs8PrivateKey();
+        return Pem("PRIVATE KEY", pkcs8);
+    }
+
+    private static string ExportPublicPem(RSA rsa)
+    {
+        var spki = rsa.ExportSubjectPublicKeyInfo();
+        return Pem("PUBLIC KEY", spki);
+    }
+
+    private static string Pem(string label, byte[] der)
+    {
+        var b64 = Convert.ToBase64String(der);
+        var sb = new StringBuilder();
+        sb.AppendLine($"-----BEGIN {label}-----");
+        for (int i = 0; i < b64.Length; i += 64)
+            sb.AppendLine(b64.Substring(i, Math.Min(64, b64.Length - i)));
+        sb.AppendLine($"-----END {label}-----");
+        return sb.ToString();
+    }
+
+    private static string GetCanonicalLicenseDir()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            var programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            return Path.Combine(programData, "Atlas", "Agent", "licenses");
+        }
+
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        return Path.Combine(home, ".local", "share", "atlas", "agent", "licenses");
+    }
+}

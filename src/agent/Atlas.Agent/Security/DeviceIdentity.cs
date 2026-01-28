@@ -7,7 +7,7 @@ namespace Atlas.Agent.Security;
 public static class DeviceIdentity
 {
     // Minimal, stable device fingerprint.
-    // NOTE: This is not "hardware attestation" — just a deterministic token for local correlation.
+    // NOTE: This is not "hardware attestation" â€” just a deterministic token for local correlation.
     public static string GetDeviceId()
     {
         var machine = Environment.MachineName ?? "";

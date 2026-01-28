@@ -1,0 +1,64 @@
+using System;
+
+namespace Atlas.Agent.Licensing;
+
+/// <summary>
+/// Canonical effective status returned by LicenseService AFTER:
+/// - signature verification
+/// - expiration checks
+/// - tier caps (feature clamp + device clamp)
+/// - device limit enforcement
+/// </summary>
+public sealed record LicenseStatus(
+    bool Licensed,
+    string Reason,
+    string? LicenseId,
+    string? Customer,
+    LicenseTier Tier,
+    Feature Features,
+    int DeviceLimit,
+    DateTimeOffset? IssuedAt,
+    DateTimeOffset? ExpiresAt
+)
+{
+    public static LicenseStatus Unlicensed(string reason) =>
+        new(
+            Licensed: false,
+            Reason: reason,
+            LicenseId: null,
+            Customer: null,
+            Tier: LicenseTier.Free,
+            Features: Feature.None,
+            DeviceLimit: 0,
+            IssuedAt: null,
+            ExpiresAt: null
+        );
+
+    public static LicenseStatus LicensedOk(
+        string licenseId,
+        string customer,
+        LicenseTier tier,
+        Feature features,
+        int deviceLimit,
+        DateTimeOffset issuedAt,
+        DateTimeOffset? expiresAt
+    ) =>
+        new(
+            Licensed: true,
+            Reason: "ok",
+            LicenseId: licenseId,
+            Customer: customer,
+            Tier: tier,
+            Features: features,
+            DeviceLimit: deviceLimit,
+            IssuedAt: issuedAt,
+            ExpiresAt: expiresAt
+        );
+    public static LicenseStatus Denied(string reason, LicenseStatus baseStatus)
+    {
+        // Preserve verified/parsed metadata, but deny license.
+        var denied = Unlicensed(reason);
+        return denied;
+    }
+
+}
