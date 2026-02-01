@@ -7,8 +7,7 @@ var deviceId = Environment.GetEnvironmentVariable("ATLAS_DEVICE_ID") ?? Environm
 var baseUrl = Environment.GetEnvironmentVariable("ATLAS_AUTHORITY_URL") ?? "http://127.0.0.1:5000";
 
 var pollSeconds = int.TryParse(Environment.GetEnvironmentVariable("ATLAS_POLL_SECONDS"), out var ps) ? ps : 3;
-var cacheDir = Environment.GetEnvironmentVariable("ATLAS_CACHE_DIR") ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Atlas", "cache");
-
+var cacheDir = Environment.GetEnvironmentVariable("ATLAS_CACHE_DIR") ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Atlas", "cache");
 Directory.CreateDirectory(cacheDir);
 
 Console.WriteLine($"Atlas.Agent starting");
