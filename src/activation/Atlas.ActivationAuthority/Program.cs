@@ -198,4 +198,11 @@ app.MapPost("/v1/jobs/{id}/cancel-ack", async (string id, string tenantId, strin
     };
 });
 
+/* ATLAS_A1_AGENTS_HELLO_BEGIN */
+
+app.MapPost("/v1/agents/hello", () => Results.Ok(new { ok = true }));
+
+/* ATLAS_A1_AGENTS_HELLO_END */
+
+
 app.Run();
