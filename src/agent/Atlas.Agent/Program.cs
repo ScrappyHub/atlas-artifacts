@@ -71,6 +71,15 @@ using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
 /* ATLAS_A1_HELLO_CALL */
 await PostHelloAsync(http, baseUrl, tenantId, deviceId, cts.Token);
 /* ATLAS_A1_HELLO_CALL_END */
+/* ATLAS_A1_ONESHOT_BEGIN */
+var oneShot = Environment.GetEnvironmentVariable("ATLAS_ONESHOT") == "1";
+if (oneShot)
+{
+  Console.WriteLine("ATLAS_ONESHOT=1 -> exiting after hello.");
+  return;
+}
+/* ATLAS_A1_ONESHOT_END */
+
 
 while (true)
 {
