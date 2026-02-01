@@ -13,11 +13,6 @@ Directory.CreateDirectory(cacheDir);
 
 Console.WriteLine($"Atlas.Agent starting");
 Console.WriteLine($"Authority={baseUrl} TenantId={tenantId} DeviceId={deviceId} Cache={cacheDir}");
-/* ATLAS_A1_HELLO_CALL */
-await PostHelloAsync(http, baseUrl, tenantId, deviceId, cts.Token);
-/* ATLAS_A1_HELLO_CALL_END */
-
-
 /* ATLAS_A1_HELLO_BEGIN */
 static string DetectOs()
 {
@@ -71,6 +66,11 @@ static async Task<bool> PostHelloAsync(HttpClient http, string baseUrl, string t
     }
 }
 /* ATLAS_A1_HELLO_END */
+
+using var cts = new CancellationTokenSource();
+/* ATLAS_A1_HELLO_CALL */
+await PostHelloAsync(http, baseUrl, tenantId, deviceId, cts.Token);
+/* ATLAS_A1_HELLO_CALL_END */
 
 
 using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
