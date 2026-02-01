@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Json;
 using Atlas.ActivationContracts;
 
@@ -13,6 +13,65 @@ Directory.CreateDirectory(cacheDir);
 
 Console.WriteLine($"Atlas.Agent starting");
 Console.WriteLine($"Authority={baseUrl} TenantId={tenantId} DeviceId={deviceId} Cache={cacheDir}");
+/* ATLAS_A1_HELLO_CALL */
+await PostHelloAsync(http, baseUrl, tenantId, deviceId, cts.Token);
+/* ATLAS_A1_HELLO_CALL_END */
+
+
+/* ATLAS_A1_HELLO_BEGIN */
+static string DetectOs()
+{
+    if (OperatingSystem.IsWindows()) return "windows";
+    if (OperatingSystem.IsMacOS()) return "macos";
+    if (OperatingSystem.IsLinux()) return "linux";
+    return "unknown";
+}
+
+static string DetectArch()
+{
+    return System.Runtime.InteropServices.RuntimeInformation.OSArchitecture.ToString().ToLowerInvariant();
+}
+
+static string DetectAgentVersion()
+{
+    return typeof(Program).Assembly.GetName().Version?.ToString() ?? "0.0.0";
+}
+
+static string[] DetectCapabilities()
+{
+    return new[] { "inventory" };
+}
+
+static async Task<bool> PostHelloAsync(HttpClient http, string baseUrl, string tenantId, string deviceId, CancellationToken ct)
+{
+    try
+    {
+        var url = $"{baseUrl}/v1/agents/hello";
+        var req = new Atlas.ActivationContracts.AgentSpine.AgentHelloRequest(
+            tenantId: tenantId,
+            deviceId: deviceId,
+            os: DetectOs(),
+            arch: DetectArch(),
+            agentVersion: DetectAgentVersion(),
+            capabilities: DetectCapabilities()
+        );
+
+        var json = System.Text.Json.JsonSerializer.Serialize(req);
+        using var content = new StringContent(json, Encoding.UTF8, "application/json");
+        using var resp = await http.PostAsync(url, content, ct);
+        var body = await resp.Content.ReadAsStringAsync(ct);
+
+        Console.WriteLine($"HELLO status={(int)resp.StatusCode} body={body}");
+        return resp.IsSuccessStatusCode;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("HELLO error: " + ex.Message);
+        return false;
+    }
+}
+/* ATLAS_A1_HELLO_END */
+
 
 using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
 
