@@ -59,6 +59,12 @@ if(-not (Test-Path -LiteralPath $RepoRoot -PathType Container)){
 }
 $RepoRoot = (Resolve-Path -LiteralPath $RepoRoot).Path
 
+$historyLib = Join-Path $RepoRoot "scripts\_lib_atlas_history_jobs_v1.ps1"
+if(-not (Test-Path -LiteralPath $historyLib -PathType Leaf)){ Die ("MISSING_HISTORY_LIB: " + $historyLib) }
+. $historyLib
+
+$jobId = New-AtlasJobId "atlas_verify_packet"
+
 if([string]::IsNullOrWhiteSpace($PacketDir)){
   $PSExe = (Get-Command powershell.exe -ErrorAction Stop).Source
   $EmitRun = Join-Path $RepoRoot "scripts\_RUN_atlas_emit_inventory_packet_v1.ps1"
@@ -67,13 +73,13 @@ if([string]::IsNullOrWhiteSpace($PacketDir)){
   }
 
   $emitOut = & $PSExe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $EmitRun -RepoRoot $RepoRoot 2>&1
-  foreach($x in @($emitOut)){ [Console]::Out.WriteLine($x) }
+  foreach($x in @($emitOut)){ [Console]::Out.WriteLine([string]$x) }
   if($LASTEXITCODE -ne 0){
     Die ("EMIT_PACKET_FAILED exit=" + $LASTEXITCODE)
   }
 
   foreach($x in @($emitOut)){
-    if($x -is [string] -and $x.StartsWith("PACKET_DIR=")){
+    if(($x -is [string]) -and $x.StartsWith("PACKET_DIR=")){
       $PacketDir = $x.Substring("PACKET_DIR=".Length).Trim()
     }
   }
@@ -114,6 +120,7 @@ if(-not $refMatch.Success){
   Die "CONTENT_REF_MISSING_IN_MANIFEST"
 }
 $contentHex = $refMatch.Groups["hex"].Value
+$contentRef = "sha256:" + $contentHex
 $blobPath = Join-Path $RepoRoot ("data\blobs\" + $contentHex)
 if(-not (Test-Path -LiteralPath $blobPath -PathType Leaf)){
   Die ("MISSING_BLOB: " + $blobPath)
@@ -180,7 +187,10 @@ if($reconstructedSelfHex -ne $selfHex){
   Die ("SHA256SUMS_HASH_MISMATCH: rel=sha256sums.txt got=" + $reconstructedSelfHex + " expected=" + $selfHex)
 }
 
+$null = Add-AtlasJobLedgerLine -RepoRoot $RepoRoot -JobId $jobId -JobType "verify-inventory-packet" -Status "ok" -DeviceId "" -ContentRef $contentRef -PacketId $packetIdTrim -PacketDir $PacketDir -Note "verify packet completed"
+
 Write-Host "ATLAS_TIER0_PACKET_VERIFY_OK" -ForegroundColor Green
+Write-Host ("JOB_ID=" + $jobId)
 Write-Host ("PACKET_DIR=" + $PacketDir)
 Write-Host ("PACKET_ID=" + $packetIdTrim)
 Write-Host ("MANIFEST_SHA256=" + $manifestSha)
