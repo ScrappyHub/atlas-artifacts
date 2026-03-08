@@ -1,0 +1,1 @@
+{"schema":"atlas.packet.manifest.v1","packet_type":"atlas.inventory.snapshot.packet.v1","device_id":"dev-1","captured_utc":"2026-03-08T04:39:33.9533891Z","content_ref":"sha256:57f1a6b2cddf8f1fcf6c66955b12584255c28c3c7e5c89833cf16e79b8ac7158","payload_files":["payload/content_ref.txt","payload/inventory.snapshot.meta.json"]}

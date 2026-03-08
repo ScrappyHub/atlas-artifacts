@@ -1,0 +1,8 @@
+ATLAS_TIER0_FREEZE_MANIFEST_V1
+UTC=2026-03-08T04:39:40.6273655Z
+SOURCE_PACKET_DIR=C:\dev\atlas-update\data\outbox\4b46ab8fc4d56bd367c8f85c87b5e9f4964a11662b52ffd5b6737b20b2144d9f
+FROZEN_PACKET_DIR=C:\dev\atlas-update\test_vectors\atlas_tier0\frozen_latest_green\packet
+FULL_SELFTEST_STDOUT=C:\dev\atlas-update\proofs\receipts\atlas_tier0_full_green\20260307_233924\full_selftest.stdout.log
+FULL_SELFTEST_STDERR=C:\dev\atlas-update\proofs\receipts\atlas_tier0_full_green\20260307_233924\full_selftest.stderr.log
+NEGATIVE_VECTORS_STDOUT=C:\dev\atlas-update\proofs\receipts\atlas_tier0_full_green\20260307_233924\negative_vectors.stdout.log
+NEGATIVE_VECTORS_STDERR=C:\dev\atlas-update\proofs\receipts\atlas_tier0_full_green\20260307_233924\negative_vectors.stderr.log
