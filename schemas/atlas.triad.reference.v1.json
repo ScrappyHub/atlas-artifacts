@@ -1,0 +1,30 @@
+{
+  "schema": "atlas.triad.reference.v1.schema",
+  "title": "Atlas TRIAD Reference V1",
+  "type": "object",
+  "required": [
+    "schema",
+    "triad_ref",
+    "snapshot_ref",
+    "source_packet_id",
+    "source_content_ref",
+    "device_id",
+    "captured_utc",
+    "handoff_kind"
+  ],
+  "properties": {
+    "schema": { "type": "string", "const": "atlas.triad.reference.v1" },
+    "triad_ref": { "type": "string", "minLength": 1 },
+    "snapshot_ref": { "type": "string", "minLength": 1 },
+    "source_packet_id": { "type": "string", "minLength": 1 },
+    "source_content_ref": { "type": "string", "minLength": 1 },
+    "device_id": { "type": "string", "minLength": 1 },
+    "captured_utc": { "type": "string", "minLength": 1 },
+    "handoff_kind": {
+      "type": "string",
+      "enum": [ "reference-intake", "restore-prep", "update-prep" ]
+    },
+    "note": { "type": "string" }
+  },
+  "additionalProperties": true
+}
