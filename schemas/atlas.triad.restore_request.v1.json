@@ -1,0 +1,29 @@
+{
+  "schema": "atlas.triad.restore_request.v1.schema",
+  "title": "Atlas TRIAD Restore Request V1",
+  "type": "object",
+  "required": [
+    "schema",
+    "triad_ref",
+    "snapshot_ref",
+    "source_packet_id",
+    "source_content_ref",
+    "device_id",
+    "captured_utc",
+    "restore_target",
+    "request_reason"
+  ],
+  "properties": {
+    "schema": { "type": "string", "const": "atlas.triad.restore_request.v1" },
+    "triad_ref": { "type": "string", "minLength": 1 },
+    "snapshot_ref": { "type": "string", "minLength": 1 },
+    "source_packet_id": { "type": "string", "minLength": 1 },
+    "source_content_ref": { "type": "string", "minLength": 1 },
+    "device_id": { "type": "string", "minLength": 1 },
+    "captured_utc": { "type": "string", "minLength": 1 },
+    "restore_target": { "type": "string", "minLength": 1 },
+    "request_reason": { "type": "string", "minLength": 1 },
+    "note": { "type": "string" }
+  },
+  "additionalProperties": true
+}
