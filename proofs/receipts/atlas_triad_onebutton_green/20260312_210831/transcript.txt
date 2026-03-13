@@ -1,0 +1,181 @@
+STEP_BEGIN=reference-boundary-smoke
+RUNNER=C:\dev\atlas-update\scripts\_RUN_atlas_triad_boundary_smoke_v1.ps1
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_boundary\minimal_reference.v1.json
+ATLAS_TRIAD_REFERENCE_INTAKE_OK
+JOB_ID=atlas_triad_intake_20260312_210832_634_17824
+TRIAD_REFS_PATH=C:\dev\atlas-update\data\triad_references.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+TRIAD_REF=triad://restore-set/minimal-v1
+SNAPSHOT_REF=snapshot://device/dev-1/2026-03-08T00:00:00Z
+HANDOFF_KIND=reference-intake
+OK: TRIAD_REFS_PATH=C:\dev\atlas-update\data\triad_references.ndjson
+OK: JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_BOUNDARY_SMOKE_OK
+STEP_OK=reference-boundary-smoke
+STEP_BEGIN=prep-boundary-smoke
+RUNNER=C:\dev\atlas-update\scripts\_RUN_atlas_triad_prep_boundary_smoke_v1.ps1
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_prep_boundary\minimal_restore_reference.v1.json
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_prep_boundary\minimal_update_reference.v1.json
+ATLAS_TRIAD_RESTORE_PREP_OK
+JOB_ID=atlas_triad_restore_prep_20260312_210833_663_11448
+RESTORE_PREP_PATH=C:\dev\atlas-update\data\triad_restore_prep.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+TRIAD_REF=triad://restore-set/restore-prep-minimal-v1
+SNAPSHOT_REF=snapshot://device/dev-1/restore/2026-03-08T00:00:00Z
+RESTORE_TARGET=device/dev-1/restore-target-a
+ATLAS_TRIAD_UPDATE_PREP_OK
+JOB_ID=atlas_triad_update_prep_20260312_210834_180_45244
+UPDATE_PREP_PATH=C:\dev\atlas-update\data\triad_update_prep.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+TRIAD_REF=triad://restore-set/update-prep-minimal-v1
+SNAPSHOT_REF=snapshot://device/dev-1/update/2026-03-08T00:00:00Z
+ARTIFACT_TARGET=atlas/artifacts/update-target-a
+OK: RESTORE_PREP_PATH=C:\dev\atlas-update\data\triad_restore_prep.ndjson
+OK: UPDATE_PREP_PATH=C:\dev\atlas-update\data\triad_update_prep.ndjson
+OK: JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_PREP_BOUNDARY_SMOKE_OK
+STEP_OK=prep-boundary-smoke
+STEP_BEGIN=taxonomy-intents-smoke
+RUNNER=C:\dev\atlas-update\scripts\_RUN_atlas_triad_job_taxonomy_and_intents_smoke_v1.ps1
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_intents\minimal_restore_request_reference.v1.json
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_intents\minimal_artifact_apply_request_reference.v1.json
+ATLAS_TRIAD_RESTORE_REQUEST_OK
+JOB_ID=atlas_triad_restore_request_20260312_210835_111_46772
+RESTORE_REQUEST_PATH=C:\dev\atlas-update\data\triad_restore_requests.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_ARTIFACT_APPLY_REQUEST_OK
+JOB_ID=atlas_triad_artifact_apply_request_20260312_210835_645_38588
+ARTIFACT_APPLY_REQUEST_PATH=C:\dev\atlas-update\data\triad_artifact_apply_requests.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+OK: RESTORE_REQUEST_PATH=C:\dev\atlas-update\data\triad_restore_requests.ndjson
+OK: ARTIFACT_APPLY_REQUEST_PATH=C:\dev\atlas-update\data\triad_artifact_apply_requests.ndjson
+OK: JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_JOB_TAXONOMY_AND_INTENTS_SMOKE_OK
+STEP_OK=taxonomy-intents-smoke
+STEP_BEGIN=family-full
+RUNNER=C:\dev\atlas-update\scripts\_RUN_atlas_triad_family_full_v1.ps1
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_boundary\minimal_reference.v1.json
+ATLAS_TRIAD_REFERENCE_INTAKE_OK
+JOB_ID=atlas_triad_intake_20260312_210836_995_25096
+TRIAD_REFS_PATH=C:\dev\atlas-update\data\triad_references.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+TRIAD_REF=triad://restore-set/minimal-v1
+SNAPSHOT_REF=snapshot://device/dev-1/2026-03-08T00:00:00Z
+HANDOFF_KIND=reference-intake
+OK: TRIAD_REFS_PATH=C:\dev\atlas-update\data\triad_references.ndjson
+OK: JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_BOUNDARY_SMOKE_OK
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_prep_boundary\minimal_restore_reference.v1.json
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_prep_boundary\minimal_update_reference.v1.json
+ATLAS_TRIAD_RESTORE_PREP_OK
+JOB_ID=atlas_triad_restore_prep_20260312_210838_003_34040
+RESTORE_PREP_PATH=C:\dev\atlas-update\data\triad_restore_prep.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+TRIAD_REF=triad://restore-set/restore-prep-minimal-v1
+SNAPSHOT_REF=snapshot://device/dev-1/restore/2026-03-08T00:00:00Z
+RESTORE_TARGET=device/dev-1/restore-target-a
+ATLAS_TRIAD_UPDATE_PREP_OK
+JOB_ID=atlas_triad_update_prep_20260312_210838_512_35128
+UPDATE_PREP_PATH=C:\dev\atlas-update\data\triad_update_prep.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+TRIAD_REF=triad://restore-set/update-prep-minimal-v1
+SNAPSHOT_REF=snapshot://device/dev-1/update/2026-03-08T00:00:00Z
+ARTIFACT_TARGET=atlas/artifacts/update-target-a
+OK: RESTORE_PREP_PATH=C:\dev\atlas-update\data\triad_restore_prep.ndjson
+OK: UPDATE_PREP_PATH=C:\dev\atlas-update\data\triad_update_prep.ndjson
+OK: JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_PREP_BOUNDARY_SMOKE_OK
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_intents\minimal_restore_request_reference.v1.json
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_intents\minimal_artifact_apply_request_reference.v1.json
+ATLAS_TRIAD_RESTORE_REQUEST_OK
+JOB_ID=atlas_triad_restore_request_20260312_210839_597_17808
+RESTORE_REQUEST_PATH=C:\dev\atlas-update\data\triad_restore_requests.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_ARTIFACT_APPLY_REQUEST_OK
+JOB_ID=atlas_triad_artifact_apply_request_20260312_210840_148_10184
+ARTIFACT_APPLY_REQUEST_PATH=C:\dev\atlas-update\data\triad_artifact_apply_requests.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+OK: RESTORE_REQUEST_PATH=C:\dev\atlas-update\data\triad_restore_requests.ndjson
+OK: ARTIFACT_APPLY_REQUEST_PATH=C:\dev\atlas-update\data\triad_artifact_apply_requests.ndjson
+OK: JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_JOB_TAXONOMY_AND_INTENTS_SMOKE_OK
+OK: FAMILY_OBJECT_OK: C:\dev\atlas-update\test_vectors\atlas_triad_boundary\minimal_reference.v1.json :: reference
+OK: FAMILY_OBJECT_OK: C:\dev\atlas-update\test_vectors\atlas_triad_prep_boundary\minimal_restore_reference.v1.json :: reference
+OK: FAMILY_OBJECT_OK: C:\dev\atlas-update\test_vectors\atlas_triad_prep_boundary\minimal_update_reference.v1.json :: reference
+OK: FAMILY_OBJECT_OK: C:\dev\atlas-update\test_vectors\atlas_triad_intents\minimal_restore_request_reference.v1.json :: reference
+OK: FAMILY_OBJECT_OK: C:\dev\atlas-update\test_vectors\atlas_triad_intents\minimal_artifact_apply_request_reference.v1.json :: reference
+OK: TRIAD_REFS_PATH=C:\dev\atlas-update\data\triad_references.ndjson
+OK: RESTORE_PREP_PATH=C:\dev\atlas-update\data\triad_restore_prep.ndjson
+OK: UPDATE_PREP_PATH=C:\dev\atlas-update\data\triad_update_prep.ndjson
+OK: RESTORE_REQUEST_PATH=C:\dev\atlas-update\data\triad_restore_requests.ndjson
+OK: ARTIFACT_APPLY_REQUEST_PATH=C:\dev\atlas-update\data\triad_artifact_apply_requests.ndjson
+OK: JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_FAMILY_FULL_OK
+STEP_OK=family-full
+STEP_BEGIN=emitted-lineage-full
+RUNNER=C:\dev\atlas-update\scripts\_RUN_atlas_triad_emitted_lineage_full_v1.ps1
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_boundary\minimal_reference.v1.json
+ATLAS_TRIAD_REFERENCE_INTAKE_OK
+JOB_ID=atlas_triad_intake_20260312_210842_083_30956
+TRIAD_REFS_PATH=C:\dev\atlas-update\data\triad_references.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+TRIAD_REF=triad://restore-set/minimal-v1
+SNAPSHOT_REF=snapshot://device/dev-1/2026-03-08T00:00:00Z
+HANDOFF_KIND=reference-intake
+OK: TRIAD_REFS_PATH=C:\dev\atlas-update\data\triad_references.ndjson
+OK: JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_BOUNDARY_SMOKE_OK
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_prep_boundary\minimal_restore_reference.v1.json
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_prep_boundary\minimal_update_reference.v1.json
+ATLAS_TRIAD_RESTORE_PREP_OK
+JOB_ID=atlas_triad_restore_prep_20260312_210843_213_48880
+RESTORE_PREP_PATH=C:\dev\atlas-update\data\triad_restore_prep.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+TRIAD_REF=triad://restore-set/restore-prep-minimal-v1
+SNAPSHOT_REF=snapshot://device/dev-1/restore/2026-03-08T00:00:00Z
+RESTORE_TARGET=device/dev-1/restore-target-a
+ATLAS_TRIAD_UPDATE_PREP_OK
+JOB_ID=atlas_triad_update_prep_20260312_210843_845_29732
+UPDATE_PREP_PATH=C:\dev\atlas-update\data\triad_update_prep.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+TRIAD_REF=triad://restore-set/update-prep-minimal-v1
+SNAPSHOT_REF=snapshot://device/dev-1/update/2026-03-08T00:00:00Z
+ARTIFACT_TARGET=atlas/artifacts/update-target-a
+OK: RESTORE_PREP_PATH=C:\dev\atlas-update\data\triad_restore_prep.ndjson
+OK: UPDATE_PREP_PATH=C:\dev\atlas-update\data\triad_update_prep.ndjson
+OK: JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_PREP_BOUNDARY_SMOKE_OK
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_intents\minimal_restore_request_reference.v1.json
+OK: WROTE_VECTOR=C:\dev\atlas-update\test_vectors\atlas_triad_intents\minimal_artifact_apply_request_reference.v1.json
+ATLAS_TRIAD_RESTORE_REQUEST_OK
+JOB_ID=atlas_triad_restore_request_20260312_210844_937_49696
+RESTORE_REQUEST_PATH=C:\dev\atlas-update\data\triad_restore_requests.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_ARTIFACT_APPLY_REQUEST_OK
+JOB_ID=atlas_triad_artifact_apply_request_20260312_210845_550_32936
+ARTIFACT_APPLY_REQUEST_PATH=C:\dev\atlas-update\data\triad_artifact_apply_requests.ndjson
+JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+OK: RESTORE_REQUEST_PATH=C:\dev\atlas-update\data\triad_restore_requests.ndjson
+OK: ARTIFACT_APPLY_REQUEST_PATH=C:\dev\atlas-update\data\triad_artifact_apply_requests.ndjson
+OK: JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_JOB_TAXONOMY_AND_INTENTS_SMOKE_OK
+OK: FAMILY_OBJECT_OK: C:\dev\atlas-update\test_vectors\atlas_triad_boundary\minimal_reference.v1.json :: reference
+OK: FAMILY_OBJECT_OK: C:\dev\atlas-update\test_vectors\atlas_triad_prep_boundary\minimal_restore_reference.v1.json :: reference
+OK: FAMILY_OBJECT_OK: C:\dev\atlas-update\test_vectors\atlas_triad_prep_boundary\minimal_update_reference.v1.json :: reference
+OK: FAMILY_OBJECT_OK: C:\dev\atlas-update\test_vectors\atlas_triad_intents\minimal_restore_request_reference.v1.json :: reference
+OK: FAMILY_OBJECT_OK: C:\dev\atlas-update\test_vectors\atlas_triad_intents\minimal_artifact_apply_request_reference.v1.json :: reference
+OK: TRIAD_REFS_PATH=C:\dev\atlas-update\data\triad_references.ndjson
+OK: RESTORE_PREP_PATH=C:\dev\atlas-update\data\triad_restore_prep.ndjson
+OK: UPDATE_PREP_PATH=C:\dev\atlas-update\data\triad_update_prep.ndjson
+OK: RESTORE_REQUEST_PATH=C:\dev\atlas-update\data\triad_restore_requests.ndjson
+OK: ARTIFACT_APPLY_REQUEST_PATH=C:\dev\atlas-update\data\triad_artifact_apply_requests.ndjson
+OK: JOB_LEDGER_PATH=C:\dev\atlas-update\data\jobs.ndjson
+ATLAS_TRIAD_FAMILY_FULL_OK
+OK: REFERENCE_CLASS=reference
+OK: RESTORE_PREP_CLASS=restore-prep
+OK: UPDATE_PREP_CLASS=update-prep
+OK: RESTORE_REQUEST_CLASS=restore-request
+OK: ARTIFACT_APPLY_CLASS=artifact-apply-request
+OK: RECEIPT_PATH=C:\dev\atlas-update\proofs\receipts\atlas_triad_emitted_lineage.ndjson
+ATLAS_TRIAD_EMITTED_LINEAGE_FULL_OK
+STEP_OK=emitted-lineage-full
