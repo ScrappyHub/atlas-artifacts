@@ -28,6 +28,7 @@ internal static class Program
     try
     {
       if (cmd == "emit-inventory") return EmitInventory(args);
+      if (cmd == "emit-artifact") return EmitArtifact(args);
       if (cmd == "verify-blob") return VerifyBlob(args);
       if (cmd == "verify-pledge") return VerifyPledge(args);
       Console.Error.WriteLine("UNKNOWN_CMD: " + cmd);
@@ -201,6 +202,71 @@ internal static class Program
     Console.WriteLine("PACKET_ID=" + packetId);
     Console.WriteLine("CAPTURED_UTC=" + capturedUtc);
     Console.WriteLine("DEVICE_ID=" + deviceId);
+    return 0;
+  }
+
+  private static int EmitArtifact(string[] args)
+  {
+    string file = "";
+    string eventType = "atlas.artifact.v1";
+    string strength = "evidence";
+    string? capturedUtcOverride = null;
+    string? nflUrl = null;
+    var tags = new List<string>();
+
+    for (int i = 1; i < args.Length; i++)
+    {
+      var a = args[i];
+      string Next()
+      {
+        if (i + 1 >= args.Length) throw new InvalidOperationException("Missing value after " + a);
+        i++;
+        return args[i];
+      }
+      if (a == "--file") file = Next();
+      else if (a == "--event-type") eventType = Next();
+      else if (a == "--strength") strength = Next();
+      else if (a == "--tag") tags.Add(Next());
+      else if (a == "--captured-utc") capturedUtcOverride = Next();
+      else if (a == "--nfl-url") nflUrl = Next();
+      else throw new InvalidOperationException("Unknown arg: " + a);
+    }
+    if (string.IsNullOrWhiteSpace(file)) throw new InvalidOperationException("--file required");
+    if (!File.Exists(file)) throw new FileNotFoundException("artifact file not found", file);
+
+    var repoRoot = Path.GetFullPath(Directory.GetCurrentDirectory());
+    var payloadBytes = File.ReadAllBytes(file);            // artifact = exact file bytes
+    var contentRef = BlobStore.PutBlob(repoRoot, payloadBytes);
+    var blobPath = BlobStore.PathForContentRef(repoRoot, contentRef);
+
+    var privKeyPath = Path.Combine(repoRoot, "keys", "atlas-dev-ed25519");
+    var pubKeyPath = Path.Combine(repoRoot, "keys", "atlas-dev-ed25519.pub");
+    if (!File.Exists(privKeyPath)) throw new FileNotFoundException("missing signing key", privKeyPath);
+    var pubLine = File.ReadAllText(pubKeyPath).Trim();
+
+    var capturedUtc = string.IsNullOrWhiteSpace(capturedUtcOverride)
+      ? DateTime.UtcNow.ToString("O") : capturedUtcOverride.Trim();
+
+    var engine = new HandoffEngine(repoRoot, Producer, Environment.MachineName + "-artifact", Principal, "data", nflUrl);
+    var prevLinks = Array.Empty<string>();
+    var policyTags = tags.Count > 0 ? tags.ToArray() : new[] { "atlas" };
+
+    var (commitHashHex, commitCanonical, keyId, sigB64) = engine.CommitAndSign(
+      eventType, capturedUtc, prevLinks, contentRef, strength, policyTags, Path.GetFileName(file),
+      privKeyPath, pubLine, SigNamespace);
+    var pledgeLogHash = engine.PledgeLocal(commitHashHex, commitCanonical, sigB64, keyId, eventType, capturedUtc, prevLinks);
+    var packetId = engine.DuplicateToNflOrQueueOutbox(commitHashHex, commitCanonical, sigB64, keyId, eventType, capturedUtc, prevLinks, "plaintext");
+
+    Console.WriteLine("EMIT_OK");
+    Console.WriteLine("EVENT_TYPE=" + eventType);
+    Console.WriteLine("ARTIFACT_FILE=" + Path.GetFullPath(file));
+    Console.WriteLine("ARTIFACT_BYTES=" + payloadBytes.Length);
+    Console.WriteLine("CONTENT_REF=" + contentRef);
+    Console.WriteLine("BLOB_PATH=" + blobPath);
+    Console.WriteLine("COMMIT_HASH=sha256:" + commitHashHex);
+    Console.WriteLine("PLEDGE_LOG_HASH=" + pledgeLogHash);
+    Console.WriteLine("PACKET_ID=" + packetId);
+    Console.WriteLine("CAPTURED_UTC=" + capturedUtc);
     return 0;
   }
 
