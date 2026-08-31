@@ -1,0 +1,10 @@
+﻿ATLAS UPDATER OPERATOR GREEN 20260831T181904Z admin=True
+
+CHECK inventory=True
+CHECK update_gate_blocks_held=True
+CHECK update_dry_allowed=True
+CHECK rollback_dry=True
+CHECK passive_block_lifecycle=True
+CHECK os_update_scan_ran=True
+
+ATLAS_UPDATER_OPERATOR_GREEN_OK
