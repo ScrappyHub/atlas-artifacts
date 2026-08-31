@@ -1,0 +1,10 @@
+=== held package (expect BLOCKED) === 
+UPDATE id=BlenderFoundation.Blender state=held allowed=False action=blocked cur=5.1.2 exit=0
+OK: UPDATE_RECORD=C:\dev\atlas-update\runtime\software_fleet\updates\update_BlenderFoundation.Blender_apply_20260831T175611Z.json
+PACKET_ID=sha256:f6e7156881ebd799a1715cea66050e4af29e4be8cedd786a56bcbda71ed7e4bd
+ATLAS_UPDATE_BLOCKED: held
+=== normal package (dry-run, allowed) === 
+UPDATE id=7zip.7zip state=allowed allowed=True action=dry_run cur=7-Zip exit=0
+OK: UPDATE_RECORD=C:\dev\atlas-update\runtime\software_fleet\updates\update_7zip.7zip_dry_20260831T175617Z.json
+PACKET_ID=sha256:9467c9d5e8d4e28d6f453c0ec5bc1f93deaba26fe5056831e5a233badfd624c6
+ATLAS_UPDATE_OK
