@@ -1,3 +1,8 @@
+# ============================================================================
+# DEPRECATED (Atlas Tier-0). This builder emits UNSIGNED pointer-packets whose
+# sha256sums.txt self-references. Superseded by the `emit-inventory` CLI command
+# (full signed chain). See ATLAS_SPEC.md section 7. Retained for legacy callers.
+# ============================================================================
 param(
   [Parameter(Mandatory=$true)][string]$RepoRoot,
   [string]$DeviceId = "dev-1",

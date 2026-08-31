@@ -1,3 +1,9 @@
+# ============================================================================
+# DEPRECATED (Atlas Tier-0). This verifier accepts BARE-HEX packet_id.txt and
+# checks NO commitment/signature. It contradicts ATLAS_SPEC.md laws 7 and the
+# Tier-0 theorem. Use scripts/_VERIFY_atlas_signed_inventory_packet_v1.ps1.
+# Retained only for legacy/back-compat callers.
+# ============================================================================
 param(
   [Parameter(Mandatory=$true)][string]$RepoRoot,
   [string]$PacketDir = ""
