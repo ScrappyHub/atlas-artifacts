@@ -1,0 +1,1 @@
+{"content_ref":"sha256:63752d3b255d4548f3b7b9caa8e2ca6660881ce4f0d97faa5f5889cbe1080a81","event_time_utc":"2026-08-31T02:10:57.0404648Z","event_type":"atlas.inventory.snapshot.v1","notes_ref":null,"policy_tags":["atlas","standalone"],"prev_links":[],"producer":"atlas-artifact","producer_instance":"ANAKIN-dev-1","schema":"commitment.v1","strength":"evidence"}

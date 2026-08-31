@@ -1,0 +1,1 @@
+{"created_utc":"2026-08-31T02:10:57.1335661Z","files":[{"path":"payload/nfl.ingest.json"},{"path":"payload/commit.payload.json"}],"kind":"nfl.ingest.v1","producer":"atlas-artifact","schema":"packet.manifest.v1"}

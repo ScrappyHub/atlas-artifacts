@@ -1,0 +1,103 @@
+ATLAS TIER-0 SIGNED-GREEN RUN 20260831T021054Z
+RepoRoot=C:\dev\atlas-update
+=== [1] CLEAN BUILD ===
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Atlas.Handoff -> C:\dev\atlas-update\src\shared\Atlas.Handoff\bin\Debug\net8.0\Atlas.Handoff.dll
+  Atlas.HandoffCli -> C:\dev\atlas-update\src\tools\Atlas.HandoffCli\bin\Debug\net8.0\Atlas.HandoffCli.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.10
+CHECK build=PASS :: exit=0
+=== [2] EMIT signed inventory packet ===
+EMIT_OK
+CONTENT_REF=sha256:63752d3b255d4548f3b7b9caa8e2ca6660881ce4f0d97faa5f5889cbe1080a81
+BLOB_PATH=C:\dev\atlas-update\data\blobs\63752d3b255d4548f3b7b9caa8e2ca6660881ce4f0d97faa5f5889cbe1080a81
+COMMIT_HASH=sha256:91e8e23eb00f83a91b1a9a04bae7ef24bd89c5db605b15591cfedbb6d8884d33
+PRODUCER_KEY_ID=sha256:b9a6d38c2debe88ee4bd5dd5a500351277c181d286e91ab690f71307daf6279a
+PLEDGE_LOG_HASH=sha256:4fcb135cc16d8b296315f570d2812770f5699a49691b7acb33f997161248b5ee
+PACKET_ID=sha256:2cbf14f21ce58c287a1f608140bdb7fcbf886bd97f38e86e5311938c3175ea91
+CAPTURED_UTC=2026-08-31T02:10:57.0404648Z
+DEVICE_ID=dev-1
+CHECK emit=PASS :: packet=2cbf14f21ce58c287a1f608140bdb7fcbf886bd97f38e86e5311938c3175ea91
+=== [3] VERIFY signed packet ===
+OK: CONSTITUTION_OK packet=sha256:2cbf14f21ce58c287a1f608140bdb7fcbf886bd97f38e86e5311938c3175ea91 files=4
+OK: CONTENT_REF_RESOLVES sha256:63752d3b255d4548f3b7b9caa8e2ca6660881ce4f0d97faa5f5889cbe1080a81
+OK: SIGNATURE_VALID principal=atlas ns=atlas-handoff key=sha256:b9a6d38c2debe88ee4bd5dd5a500351277c181d286e91ab690f71307daf6279a
+CLEANUP_SKIP: Access is denied
+ATLAS_SIGNED_PACKET_VERIFY_OK
+PACKET_ID=sha256:2cbf14f21ce58c287a1f608140bdb7fcbf886bd97f38e86e5311938c3175ea91
+COMMIT_HASH=sha256:91e8e23eb00f83a91b1a9a04bae7ef24bd89c5db605b15591cfedbb6d8884d33
+CONTENT_REF=sha256:63752d3b255d4548f3b7b9caa8e2ca6660881ce4f0d97faa5f5889cbe1080a81
+CHECK verify_signed_packet=PASS :: token=True
+=== [4] DETERMINISM ===
+EMIT_OK
+CONTENT_REF=sha256:fbcbc7044a1ef6c8b2c3d2eaf72f1c25390b2ad46d0adc2b91adff2e4cec00f7
+BLOB_PATH=C:\dev\atlas-update\data\blobs\fbcbc7044a1ef6c8b2c3d2eaf72f1c25390b2ad46d0adc2b91adff2e4cec00f7
+COMMIT_HASH=sha256:2e3638de72be205ffa35d3a3a4503b406f7cd5dbf020fe1188dbf35411c794c1
+PRODUCER_KEY_ID=sha256:b9a6d38c2debe88ee4bd5dd5a500351277c181d286e91ab690f71307daf6279a
+PLEDGE_LOG_HASH=sha256:13683d47b7dd6a2d194212b0face6d35152f50e10d130cbffc99d82129dd0cf0
+PACKET_ID=sha256:7482ea4b1388faee314db29902c819f4ee4880bb3816a1bad75ee60d1761dcdc
+CAPTURED_UTC=2020-01-01T00:00:00.0000000Z
+DEVICE_ID=det-1
+----
+EMIT_OK
+CONTENT_REF=sha256:fbcbc7044a1ef6c8b2c3d2eaf72f1c25390b2ad46d0adc2b91adff2e4cec00f7
+BLOB_PATH=C:\dev\atlas-update\data\blobs\fbcbc7044a1ef6c8b2c3d2eaf72f1c25390b2ad46d0adc2b91adff2e4cec00f7
+COMMIT_HASH=sha256:2e3638de72be205ffa35d3a3a4503b406f7cd5dbf020fe1188dbf35411c794c1
+PRODUCER_KEY_ID=sha256:b9a6d38c2debe88ee4bd5dd5a500351277c181d286e91ab690f71307daf6279a
+PLEDGE_LOG_HASH=sha256:bdd0f70cefb729d1f6f89a9c3c098b22ec27c50caa8cd6e840aa19c5b9c19673
+PACKET_ID=sha256:f5e7183ccde7b446449f4929352956c577f7c53bee68b7a304cd56f8734f45c3
+CAPTURED_UTC=2020-01-01T00:00:00.0000000Z
+DEVICE_ID=det-1
+CHECK determinism=PASS :: commit1=sha256:2e3638de72be205ffa35d3a3a4503b406f7cd5dbf020fe1188dbf35411c794c1 commit2=sha256:2e3638de72be205ffa35d3a3a4503b406f7cd5dbf020fe1188dbf35411c794c1
+CHECK offline_local=PASS :: no ATLAS_NFL_URL; packet produced to local outbox
+CHECK pledge_chain_linkage=PASS :: entries=10
+=== [7] PLEDGE VERIFY (positive) ===
+PLEDGE_VERIFY_OK
+ENTRIES=10
+HEAD_LOG_HASH=sha256:bdd0f70cefb729d1f6f89a9c3c098b22ec27c50caa8cd6e840aa19c5b9c19673
+CHECK verify_pledge=PASS
+=== [8] LEDGER TAMPER (negative) ===
+dotnet : PLEDGE_HASH_MISMATCH at seq=1 stored=sha256:85ac33a8418f00de0ed45957417b5935e720ca6768f578dd164e39b407bbb6f5 
+recomputed=sha256:0ef72488a9d002a5676f3e2d8167e19a9f707fae25ff32dd9bbf47bbca234832
+At C:\dev\atlas-update\scripts\_RUN_atlas_tier0_signed_green_v1.ps1:105 char:9
++   $tv = dotnet run --project $cli -c Debug --no-build -- verify-pledg ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PLEDGE_HASH_MIS...bbf47bbca234832:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+CHECK ledger_tamper_detected=PASS :: exit=4
+=== [9] NEGATIVE VECTORS ===
+NEG tamper_manifest        => REJECTED_OK  [ATLAS_SIGVERIFY_FAIL: DIRNAME_MISMATCH leaf=2cbf14f21ce58c287a1f608140bdb7fcbf886bd97f38e86e5311938c3175ea91]
+NEG tamper_packet_id       => REJECTED_OK  [ATLAS_SIGVERIFY_FAIL: PACKET_ID_TXT_MISMATCH]
+NEG bare_hex_packet_id     => REJECTED_OK  [ATLAS_SIGVERIFY_FAIL: PACKET_ID_TXT_MISMATCH got=2cbf14f21ce58c287a1f608140bdb7fcbf886bd97f38e86e5311938c3175ea91]
+NEG crlf_packet_id         => REJECTED_OK  [ATLAS_SIGVERIFY_FAIL: CR_NOT_ALLOWED_LF_ONLY: packet_id.txt]
+NEG tamper_commit_payload  => REJECTED_OK  [ATLAS_SIGVERIFY_FAIL: HASH_MISMATCH: payload/commit.payload.json]
+NEG tamper_sums            => REJECTED_OK  [ATLAS_SIGVERIFY_FAIL: HASH_MISMATCH: payload/commit.payload.json]
+NEG dup_path               => REJECTED_OK  [ATLAS_SIGVERIFY_FAIL: SUMS_DUP_PATH: manifest.json]
+NEG self_sum               => REJECTED_OK  [ATLAS_SIGVERIFY_FAIL: SUMS_SELF_REFERENCE_FORBIDDEN]
+NEG missing_file           => REJECTED_OK  [ATLAS_SIGVERIFY_FAIL: MISSING_FILE: C:\dev\atlas-update\proofs\audit\signed_green_20260831T021054Z\negatives\missing_fi]
+NEG malformed_sig          => REJECTED_OK
+NEG wrong_signer           => REJECTED_OK  [ATLAS_SIGVERIFY_FAIL: SIGNATURE_INVALID exit=-1 out=Could not verify signature.]
+NEGATIVE_VECTORS 11/11 correctly rejected
+ATLAS_NEGATIVE_VECTORS_OK
+CHECK negative_vectors=PASS
+=== [10] GOLDEN VECTOR ===
+EMIT_OK
+CONTENT_REF=sha256:fbcbc7044a1ef6c8b2c3d2eaf72f1c25390b2ad46d0adc2b91adff2e4cec00f7
+BLOB_PATH=C:\dev\atlas-update\data\blobs\fbcbc7044a1ef6c8b2c3d2eaf72f1c25390b2ad46d0adc2b91adff2e4cec00f7
+COMMIT_HASH=sha256:2e3638de72be205ffa35d3a3a4503b406f7cd5dbf020fe1188dbf35411c794c1
+PRODUCER_KEY_ID=sha256:b9a6d38c2debe88ee4bd5dd5a500351277c181d286e91ab690f71307daf6279a
+PLEDGE_LOG_HASH=sha256:867852a655674e6e10558a8067cff4a84be3758cb0e7f1abdb38ae78d47220bc
+PACKET_ID=sha256:86baed44dabf7b1d113232c6e2f013594a1de1553ed25f9f82a8756add2d4e2e
+CAPTURED_UTC=2020-01-01T00:00:00.0000000Z
+DEVICE_ID=det-1
+CHECK golden_vector=PASS :: content=sha256:fbcbc7044a1ef6c8b2c3d2eaf72f1c25390b2ad46d0adc2b91adff2e4cec00f7 commit=sha256:2e3638de72be205ffa35d3a3a4503b406f7cd5dbf020fe1188dbf35411c794c1
+
+ATLAS_TIER0_FULL_GREEN_OK
+ATLAS_TIER0_FULL_GREEN_OK
+=== [11] FREEZE ===

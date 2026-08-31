@@ -1,0 +1,65 @@
+{
+    "schema":  "atlas.tier0.freeze.v1",
+    "utc":  "20260831T021107Z",
+    "repo_root":  "C:\\dev\\atlas-update",
+    "packet_id":  "sha256:2cbf14f21ce58c287a1f608140bdb7fcbf886bd97f38e86e5311938c3175ea91",
+    "commit_hash":  "sha256:91e8e23eb00f83a91b1a9a04bae7ef24bd89c5db605b15591cfedbb6d8884d33",
+    "content_ref":  "sha256:63752d3b255d4548f3b7b9caa8e2ca6660881ce4f0d97faa5f5889cbe1080a81",
+    "golden_content_ref":  "sha256:fbcbc7044a1ef6c8b2c3d2eaf72f1c25390b2ad46d0adc2b91adff2e4cec00f7",
+    "producer_key_id":  "sha256:b9a6d38c2debe88ee4bd5dd5a500351277c181d286e91ab690f71307daf6279a",
+    "full_green_token":  "ATLAS_TIER0_FULL_GREEN_OK",
+    "tracked_files":  [
+                          {
+                              "path":  "src\\tools\\Atlas.HandoffCli\\Program.cs",
+                              "sha256":  "52a51dfa6e96e436c294e328953a6071041cff177cc32c14a66976b15f31d036"
+                          },
+                          {
+                              "path":  "src\\shared\\Atlas.Handoff\\HandoffEngine.cs",
+                              "sha256":  "2d92e920ead73fdbbc7de5d6acb1306b1b369cc0c9f08864abe98c439a432c91"
+                          },
+                          {
+                              "path":  "src\\shared\\Atlas.Handoff\\CanonicalJson.cs",
+                              "sha256":  "fa13073ef10bf320667a5a1444d3b3579e9a667cb792454c09c5dac30eb5217a"
+                          },
+                          {
+                              "path":  "src\\shared\\Atlas.Handoff\\SshKeygenSigner.cs",
+                              "sha256":  "2985e82c96cf4d673d4a73a085983165ccddfaf8c35a1a8897b0b6699e8ef447"
+                          },
+                          {
+                              "path":  "src\\shared\\Atlas.Handoff\\BlobStore.cs",
+                              "sha256":  "2733b0e94e29fae3a553808ffa5c9c185c379024859393631f2bcc9d6bb4da0a"
+                          },
+                          {
+                              "path":  "src\\shared\\Atlas.Handoff\\Models.cs",
+                              "sha256":  "b54dc8b8a53b06154c810c66da6d0bd719bc83d20fc5a0983d9afba0766a721a"
+                          },
+                          {
+                              "path":  "src\\shared\\Atlas.Handoff\\AtlasInventoryPayloads.cs",
+                              "sha256":  "b0e2fad5b8fa6403cbf1a507d6ebc08e511aa45d8847f2cd0982169bce04eaa9"
+                          },
+                          {
+                              "path":  "src\\shared\\Atlas.Handoff\\Hashing.cs",
+                              "sha256":  "9a0fe0eaf308bb3333a2b1af6f466bee0007e83db01f567aa66ad99a69cbf536"
+                          },
+                          {
+                              "path":  "src\\shared\\Atlas.Handoff\\ContentRef.cs",
+                              "sha256":  "38893879f62ac6d12a2923435e6afc53c8784528788d0a5b12924e39b369bc8c"
+                          },
+                          {
+                              "path":  "scripts\\_VERIFY_atlas_signed_inventory_packet_v1.ps1",
+                              "sha256":  "d9129d4ee0e00558478284c6dcb18ea7db01ee41a651684e9a540d1598c094ae"
+                          },
+                          {
+                              "path":  "scripts\\_RUN_atlas_tier0_signed_green_v1.ps1",
+                              "sha256":  "f885de94e2ce7c6baebe26b161394aa4749f171a1b679b9bafb27bbfb3eb5b68"
+                          },
+                          {
+                              "path":  "scripts\\_RUN_atlas_tier0_negative_vectors_signed_v1.ps1",
+                              "sha256":  "8c8b5bb0325eea0bf85de2d66b46c69731ef30cb33790aae7440e7e259419b0a"
+                          },
+                          {
+                              "path":  "keys\\atlas-dev-ed25519.pub",
+                              "sha256":  "226fd79e40f2d6847cf536903ed5a2c05368d43bac2a68b9e6a65c8a4771e16e"
+                          }
+                      ]
+}
